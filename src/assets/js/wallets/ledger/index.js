@@ -1,4 +1,4 @@
-import walletCreate from './public/walletCreate.js'
+import walletCreate from '../public/walletCreate.js'
 
 const ethUtil = require('ethereumjs-util')
 ethUtil.Tx  = require("ethereumjs-tx")

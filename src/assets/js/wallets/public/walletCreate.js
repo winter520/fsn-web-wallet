@@ -1,4 +1,5 @@
-const wallet = require('../ethereum/wallet')
+// const wallet = require('../ethereum/wallet')
+import wallet from '../ethereum/wallet'
 const HDKey = require('hdkey')
 const hdk = new HDKey()
 
@@ -6,6 +7,7 @@ const hdk = new HDKey()
 function walletCreate (publicKey, chainCode, walletType, path) {
   let moreAddr = []
   let wallets = []
+  // console.log(publicKey)
   hdk.publicKey = new Buffer(publicKey, "hex")
   hdk.chainCode = new Buffer(chainCode, "hex")
   for (let i = 0; i < 5; i++) {

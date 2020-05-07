@@ -9042,6 +9042,11 @@ typedarray@^0.0.6:
   resolved "https://registry.npm.taobao.org/typedarray/download/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+u2f-api@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/u2f-api/-/u2f-api-1.1.1.tgz#594f600ff7bb49e8bb03e9f533e1f7bfc95f2e0f"
+  integrity sha512-tbmMBmg9eaFv+cdcBwja/hbpdXwcvBV0YSQh674nmP3HI0hNWcNAp9LRJ0jl9HGWLF7gF/3UKHzIxlXCW8j7kw==
+
 uglify-js@3.4.x:
   version "3.4.10"
   resolved "https://registry.npm.taobao.org/uglify-js/download/uglify-js-3.4.10.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fuglify-js%2Fdownload%2Fuglify-js-3.4.10.tgz#9ad9563d8eb3acdfb8d38597d2af1d815f6a755f"

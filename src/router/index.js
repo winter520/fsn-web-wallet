@@ -25,10 +25,10 @@ routers.beforeEach((to, from, next) => {
   if (token) {
     next()
   } else {
-    if (to.path === '/enter' || to.path === '/register' || to.path === '/login') {
+    if (to.path === '/' || to.path === '/register' || to.path === '/login') {
       next()
     } else {
-      next('/enter')
+      next('/')
     }
   }
 })
