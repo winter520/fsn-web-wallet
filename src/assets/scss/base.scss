@@ -1,0 +1,39 @@
+$logo-h: 40px;
+
+$doubleSize: 16;
+@function size ($n) {
+  @if unit($n) == '%' {
+    @return $n
+  };
+  @if unit($n) == '' {
+    @return ($n / $doubleSize) + rem
+  }
+}
+
+$header-footer-h: size(56);
+
+$color-primary: rgba(27, 85, 209, 1);
+$color-primary-sm: rgba(27, 85, 209, .1);
+$color-info: #1ca261;
+$color-info-sm: #bbe3cf;
+$color-danger: #de5549;
+$color-danger-sn: #f4c9c6;
+$color-warning: #ffaa00;
+$color-black: #252525;
+$color-gray: #666666;
+$color-gray-sm: #999;
+
+
+// 夜间模式
+$night-bg-color: #152131;
+$night-bg-color-sm: #1a2940;
+
+$night-line-color: #0b1723;
+
+$night-text-color: #727983;
+
+$text-lg: size(28);
+$text-md: size(18);
+$text-normal: size(14);
+$text-sm: size(12);
+$text-xs: size(10);

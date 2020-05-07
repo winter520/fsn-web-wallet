@@ -19,7 +19,7 @@ function getAddressArr (HDPath) {
   })
 }
 
-function signTxLedger (app, eTx, rawTx, txData, old, stxData) {
+function signTxLedger (app, eTx, rawTx, txData, old) {
   return new Promise(resolve => {
     let data = { msg: 'Error', info: ''}
     eTx.raw[6] = rawTx.chainId
@@ -77,7 +77,7 @@ function toSign (HDPath, rawTx) {
       } else if (parseInt(splitVersion[2]) > 2) {
           EIP155Supported = true;
       }
-      signTxLedger(app, eTx, rawTx, txData, !EIP155Supported, stxData).then(res => {
+      signTxLedger(app, eTx, rawTx, txData, !EIP155Supported).then(res => {
         resolve(res)
       })
     })

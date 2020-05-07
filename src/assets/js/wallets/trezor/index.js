@@ -1,6 +1,6 @@
 import walletCreate from './public/walletCreate.js'
 const TrezorConnect = require("trezor-connect").default
-
+const Tx  = require("ethereumjs-tx")
 
 function getAddressArr (HDPath) {
   return new Promise(resolve => {
@@ -13,6 +13,13 @@ function getAddressArr (HDPath) {
       resolve(addressArr)
     })
   })
+}
+
+function sanitizeHex (hex) {
+  hex = hex.substring(0, 2) == '0x' ? hex.substring(2) : hex
+  if (hex == "") return ""
+  hex = hex.length % 2 != 0 ? '0' + hex : hex
+  return '0x' + hex
 }
 
 function toSign (HDPath, rawTx) {
@@ -41,14 +48,14 @@ function toSign (HDPath, rawTx) {
         // v = parseInt(v, 16)
         // v = v.toString(16)
         console.log(v)
-        rawTx.v = ethFuncs.sanitizeHex(v)
-        rawTx.r = ethFuncs.sanitizeHex(r)
-        rawTx.s = ethFuncs.sanitizeHex(s)
+        rawTx.v = sanitizeHex(v)
+        rawTx.r = sanitizeHex(r)
+        rawTx.s = sanitizeHex(s)
         // console.log(rawTx)
-        var eTx = new ethUtil.Tx(rawTx)
+        var eTx = new Tx(rawTx)
         console.log(eTx)
         rawTx.rawTx = JSON.stringify(rawTx)
-        rawTx.signedTx = ethFuncs.sanitizeHex(eTx.serialize().toString("hex"))
+        rawTx.signedTx = sanitizeHex(eTx.serialize().toString("hex"))
         rawTx.isError = false
         data = { msg: 'Success', info: rawTx}
       }
