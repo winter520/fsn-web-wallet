@@ -7,14 +7,19 @@ const LedgerEth = require("./ledger-eth")
 const ledger = new Ledger3("w0w")
 const app = new LedgerEth(ledger)
 
-function getAddressArr (HDPath) {
+function getAddressArr (HDPath, page) {
   return new Promise(resolve => {
+    let data = { msg: 'Error', info: []}
     app.getAddress(HDPath, (res, err) => {
       let addressArr = []
-      if (!err) {
-        addressArr = walletCreate(res["publicKey"], res["chainCode"], "ledger", HDPath)
+      if (err) {
+        data.error = err.toString()
+      } else {
+        addressArr = walletCreate(res["publicKey"], res["chainCode"], "ledger", HDPath, page)
+        data.msg = 'Success'
+        data.info = addressArr
       }
-      resolve(addressArr)
+      resolve(data)
     }, false, true)
   })
 }
@@ -27,8 +32,8 @@ function signTxLedger (app, eTx, rawTx, txData, old) {
     let toHash = old ? eTx.raw.slice(0, 6) : eTx.raw
     let txToSign = ethUtil.rlp.encode(toHash)
     app.signTransaction(txData.path, txToSign.toString('hex'), (result, error) => {
-      console.log(result)
-      console.log(error)
+      // console.log(result)
+      // console.log(error)
       if (typeof error != "undefined") {
         error = error.errorCode ? u2f.getErrorByCode(error.errorCode) : error
         data = { error: error}

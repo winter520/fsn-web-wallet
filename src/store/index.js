@@ -20,15 +20,19 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    address: localStorage.getItem('address') ? localStorage.getItem('address') : '',
+    address: '',
+    keystore: '',
+    walletType: ''
   },
   mutations: {
     setAddress (state, data) {
-      let info = data.info ? data.info : ''
-      state.address = info
-      if (!data.type) {
-        localStorage.setItem('address', info)
-      }
+      state.address = data
+    },
+    setKeystore (state, data) {
+      state.keystore = data
+    },
+    setWalletType (state, data) {
+      state.walletType = data
     },
   },
 })

@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import routes from './routers'
 
 // import cookies from '@/libs/cookie.js'
-// import store from '@/store/index.js'
+import store from '@/store/index.js'
 // console.log(cookies)
 // console.log(store.state)
 const originalPush = Router.prototype.push
@@ -21,7 +21,7 @@ const routers = new Router({
 })
 
 routers.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('address')
+  const token = store.state.address
   if (token) {
     next()
   } else {

@@ -3,6 +3,7 @@ export default {
 	error: {
 	},
 	warn: {
+		w_1: 'Please select account'
 	},
 	success: {
 		s_1: 'Connection succeeded',
@@ -32,6 +33,8 @@ export default {
 	nav: {
 	},
 	title: {
+		SELECT_WALLET_FILE: "Select Your Wallet File",
+		PASTE_PRIVATE_KEY: "Paste Your Private Key",
 	},
 	label: {
 	},
@@ -40,6 +43,7 @@ export default {
 	action: {
 	},
 	tip: {
-		net: 'U2F not supported in this browser. Please try using Google Chrome with a secure (SSL / HTTPS) connection!'
+		net: 'U2F not supported in this browser. Please try using Google Chrome with a secure (SSL / HTTPS) connection!',
+		selectAddr: 'Please select the address you would like to interact with.'
 	}
 }

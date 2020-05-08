@@ -1,16 +1,31 @@
-import walletCreate from './public/walletCreate.js'
-const TrezorConnect = require("trezor-connect").default
+import walletCreate from '../public/walletCreate.js'
+// const TrezorConnect = require("trezor-connect").default
+import TrezorConnect from 'trezor-connect'
 const Tx  = require("ethereumjs-tx")
 
-function getAddressArr (HDPath) {
+// TrezorConnect.init({
+//   connectSrc: 'https://localhost:8080/#/',
+//   lazyLoad: true, // this param will prevent iframe injection until TrezorConnect.method will be called
+//   manifest: {
+//     email: 'developer@xyz.com',
+//     appUrl: 'https://localhost:8080/#/',
+//   }
+// })
+
+function getAddressArr (HDPath, page) {
   return new Promise(resolve => {
+    let data = { msg: 'Error', info: []}
     TrezorConnect.getPublicKey({ path: HDPath }).then(res => {
       console.log(res)
       let addressArr = []
       if (res.success) {
-        addressArr = walletCreate(res.payload.publicKey, res.payload.chainCode, 'trezor', HDPath)
+        addressArr = walletCreate(res.payload.publicKey, res.payload.chainCode, 'trezor', HDPath, page)
+        data.msg = 'Success'
+        data.info = addressArr
+      } else {
+        data.error = res.payload.error
       }
-      resolve(addressArr)
+      resolve(data)
     })
   })
 }

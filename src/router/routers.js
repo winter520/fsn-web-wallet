@@ -40,4 +40,14 @@ export default [
       }
     ]
   },
+  {
+    path: '/account',
+    component: Main,
+    children: [
+      {
+        path: '/',
+        component: resolve => require.ensure([], () => resolve(require('@/pages/account/index.vue')) ),
+      }
+    ]
+  },
 ]

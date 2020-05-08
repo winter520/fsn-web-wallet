@@ -18,6 +18,7 @@
     "ethereumjs-wallet": "^0.6.3",
     "js-cookie": "^2.2.1",
     "scryptsy": "^2.1.0",
+    "trezor-connect": "^6.0.3",
     "u2f-api": "^1.1.1",
     "vue": "^2.6.10",
     "vue-i18n": "^8.17.4",

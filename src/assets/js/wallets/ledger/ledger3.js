@@ -75,7 +75,9 @@ Ledger3.prototype.exchange = function(apduHex, callback) {
   var localCallback = function(result) {
     self.u2fCallback(result, callback);
   };
-  u2f.sign([key], this.timeoutSeconds).then(localCallback);
+  u2f.sign([key], this.timeoutSeconds).then(localCallback).catch(err => {
+    callback(undefined, err)
+  })
 };
 
 module.exports = Ledger3;

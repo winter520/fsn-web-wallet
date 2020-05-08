@@ -1,8 +1,10 @@
 
 export default {
 	error: {
+		e_1: ''
 	},
 	warn: {
+		w_1: '请选择账户'
 	},
 	success: {
 		s_1: '连接成功！',
@@ -24,7 +26,8 @@ export default {
 		edit: '编辑',
 		del: '删除',
 		ledger: '连接到Ledger Wallet',
-		trezor: '连接到TREZOR'
+		trezor: '连接到TREZOR',
+		SELECT_WALLET_FILE: "选择钱包文件...",
 	},
 	loading: {
 		l_1: '加载中……'
@@ -32,6 +35,8 @@ export default {
 	nav: {
 	},
 	title: {
+		SELECT_WALLET_FILE: "选择你的钱包文件",
+		PASTE_PRIVATE_KEY: "私钥",
 	},
 	label: {
 	},
@@ -40,6 +45,7 @@ export default {
 	action: {
 	},
 	tip: {
-		net: '此浏览器不支持U2F。请尝试使用带有安全（ssl/https）连接的Google Chrome！'
+		net: '此浏览器不支持U2F。请尝试使用带有安全（ssl/https）连接的Google Chrome！',
+		selectAddr: '请选择您想要交互的地址。'
 	}
 }
