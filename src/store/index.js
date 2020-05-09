@@ -5,22 +5,9 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-// let ksArr = {}, addressObj = {}
-// if (localStorage.getItem('keystoreObj')) {
-//   ksArr = JSON.parse(localStorage.getItem('keystoreObj'))
-// }
-// if (localStorage.getItem('addressObj')) {
-//   addressObj = JSON.parse(localStorage.getItem('addressObj'))
-// } 
-
-// const navLang = navigator.language
-// const localLang = (navLang === 'zh-CN' || navLang === 'en-US') ? navLang : false
-// const local = localStorage.getItem('language') ? localStorage.getItem('language') : localLang
-// let lang = local || 'en-US'
-
 const store = new Vuex.Store({
   state: {
-    address: '',
+    address: '0xE000E632124aa65B80f74E3e4cc06DC761610583',
     keystore: '',
     walletType: ''
   },

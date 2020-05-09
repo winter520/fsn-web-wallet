@@ -50,4 +50,14 @@ export default [
       }
     ]
   },
+  {
+    path: '/send',
+    component: Main,
+    children: [
+      {
+        path: '/',
+        component: resolve => require.ensure([], () => resolve(require('@/pages/account/send.vue')) ),
+      }
+    ]
+  },
 ]

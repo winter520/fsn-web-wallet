@@ -3,9 +3,17 @@
     <header class="header-box flex-bc">
       <div class="flex-sc">
         <div class="logo"><img src="@/assets/img/logo/fsn-logo.svg"></div>
-        <div>
-
-        </div>
+        <ul class="header-nav-box flex-sc">
+          <li class="item flex-c" :class="newsActive === 'account' ? 'active' : ''" v-if="$store.state.address" @click="toUrl('/account')">
+            {{$t('nav').assets}}
+          </li>
+          <li class="item flex-c" :class="newsActive === 'importWt' ? 'active' : ''" @click="openUrl('/')">
+            {{$t('nav').importWt}}
+          </li>
+          <li class="item flex-c" :class="newsActive === 'createWt' ? 'active' : ''" @click="openUrl('/register')">
+            {{$t('nav').createWt}}
+          </li>
+        </ul>
       </div>
       <div class="flex-ec">
         <language></language>
@@ -48,6 +56,15 @@ $HeaderH: 60;
     }
   }
 }
+.header-nav-box {
+  margin-left: size(20);height: 100%;
+  .item {
+    height: size($HeaderH);font-size:size(14);color: #666666;border-bottom: size(3) solid transparent;padding: size(3) size(15) 0;cursor:pointer;
+    &.active {
+      color: #409EFF;border-bottom: size(3) solid #409EFF;
+    }
+  }
+}
 .headerTop_serBox{
   width:215px;height:40px;position: relative;
   .wifi{width: 13px;height:10px;position: absolute;left:28px;top:16px;}
@@ -73,17 +90,41 @@ export default {
         {name: 'Mainnet', url: 'https://fsn.dev/api'},
         {name: 'Testnet', url: 'https://testnet.fsn.dev/api'},
       ],
+      newsActive: '',
       network: this.$$.serverURL
     }
   },
   components: {language},
+  watch: {
+    '$route' (cur) {
+      this.newsView(cur)
+    },
+  },
   mounted () {
     this.changNetwork()
+    this.newsView(this.$route)
   },
   methods: {
     changNetwork () {
       this.$$.web3.setProvider(this.network)
       localStorage.setItem('network', this.network)
+    },
+    newsView (cur) {
+      if (cur.path.indexOf('register') !== -1) {
+        this.newsActive = 'createWt'
+      } else if (cur.path === '/') {
+        this.newsActive = 'importWt'
+      } else if (cur.path.indexOf('account') !== -1) {
+        this.newsActive = 'account'
+      } else {
+        this.newsActive = 0
+      }
+    },
+    openUrl (url) {
+      this.$store.commit("setAddress", "")
+      this.$store.commit("setKeystore", "")
+      this.$store.commit("setWalletType", "")
+      this.toUrl(url)
     }
   }
 }

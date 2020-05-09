@@ -11,6 +11,14 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/css/css.css'
 import $$ from '@/libs/index.js'
 
+// import lang from 'element-ui/lib/locale/lang/en'
+import ElementLocale from 'element-ui/lib/locale'
+
+// 设置语言
+ElementLocale.i18n((key, value) => i18n.t(key, value))
+// import ElementUI from 'element-ui'
+// Vue.use(ElementUI)
+
 import { 
   Button,
   Select,
@@ -28,6 +36,15 @@ import {
   Radio,
   RadioGroup,
   RadioButton,
+  Table,
+  TableColumn,
+  Switch,
+  Input,
+  DatePicker,
+  TimeSelect,
+  TimePicker,
+  Popover,
+  Tooltip,
 } from 'element-ui'
 Vue.use(Button)
 Vue.use(Select)
@@ -43,13 +60,22 @@ Vue.use(Dialog)
 Vue.use(Radio)
 Vue.use(RadioGroup)
 Vue.use(RadioButton)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Switch)
+Vue.use(Input)
+Vue.use(DatePicker)
+Vue.use(TimeSelect)
+Vue.use(TimePicker)
+Vue.use(Popover)
+Vue.use(Tooltip)
+Vue.prototype.$msgbox = MessageBox
+Vue.prototype.$message = Message
 
 Vue.use(Vuex)
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 Vue.prototype.$$ = $$
-Vue.prototype.$msgbox = MessageBox
-Vue.prototype.$message = Message
 
 Vue.prototype.toUrl = function(url, params) {
   this.$router.push({path: url, query: params})
