@@ -31,14 +31,6 @@
                   </div>
                 </div>
                 <div class="WW100 flex-bc H40 mb-20 mt-20" v-if="selectTimeType">
-                  <!-- <el-date-picker
-                    class="WW100"
-                    v-model="formData.date"
-                    type="daterange"
-                    range-separator="-"
-                    :start-placeholder="$t('label').startTime"
-                    :end-placeholder="$t('label').endTime">
-                  </el-date-picker> -->
                   <el-date-picker v-model="formData.startTime" type="date" :placeholder="$t('label').startTime" class="WW45" :picker-options="pickerOptionsStart" @change="changeTime"> </el-date-picker>
                   <el-date-picker v-model="formData.endTime" type="date" :placeholder="$t('label').endTime" class="WW45" :picker-options="pickerOptionsEnd"> </el-date-picker>
                 </div>
@@ -49,14 +41,6 @@
                     </el-option>
                   </el-select>
                 </div>
-                <!-- <div class="flex-bc H40 mt-20" v-if="selectTimeType">
-                  <el-input type="text" v-model="formData.startTime" @click="prop.startTime = true; formTimeKey = 'startTime'" :placeholder="$t('label').startTime" class="" readonly></el-input>
-                  <el-input type="text" v-model="formData.endTime" @click="prop.endTime = true; formTimeKey = 'endTime'" :placeholder="$t('label').endTime" class="" readonly></el-input>
-                </div>
-                <div class="WW100 flex-bc H40 mt-20" v-else>
-                  <el-input type="text" v-model="formData.month" @click="prop.month = true; formTimeKey = 'month'" :placeholder="$t('label').selectTime" class="" readonly></el-input>
-                  <p class="flex-c ml-10 font14" style="white-space:nowrap;">{{$t('label').months}}</p>
-                </div> -->
               </el-tab-pane>
               <el-tab-pane :label="$t('label').forever" name="c" v-if="sendType === '0' || urlParams.EndTime.toString().length > 13">
                 <div class="flex-bc H40 mt-20 WW100 mb-20">
@@ -76,7 +60,7 @@
 
     <!-- 签名 start -->
     <el-dialog :title="$t('btn').unlock" :visible.sync="prop.pwd" width="300" :before-close="cancel" :close-on-click-modal="false" :modal-append-to-body='false'>
-      <unlock v-if="prop.pwd" :txnsData='dataPage' @setPrviKey="sendTxns"></unlock>
+      <unlock v-if="prop.pwd" :txnsData='dataPage' @setPrviKey="getSignData"></unlock>
     </el-dialog>
     <!-- 签名 end -->
 
@@ -176,7 +160,8 @@ export default {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7
         }
-      }
+      },
+      signTx: ''
     }
   },
   watch: {
@@ -429,22 +414,26 @@ export default {
         this.msgError(err.toString())
       })
     },
-    sendTxns (data) {
+    getSignData (data) {
       if (data.msg === 'Success') {
-        this.$$.web3.eth.sendSignedTransaction(data.info, (err, hash) => {
-          this.cancel()
-          if (err) {
-            this.msgError(err.toString())
-          } else {
-            console.log(hash)
-            this.msgSuccess(this.$t('success').s_4 + 'Hash:' + hash)
-          }
-          this.prop.pwd = false
-        })
+        this.signTx = data.info
       } else {
         this.msgError(data.error)
-        this.prop.pwd = false
       }
+      this.prop.pwd = false
+      this.prop.confirm = true
+    },
+    sendTxns () {
+      this.$$.web3.eth.sendSignedTransaction(this.signTx, (err, hash) => {
+        this.cancel()
+        if (err) {
+          this.msgError(err.toString())
+        } else {
+          console.log(hash)
+          this.msgSuccess(this.$t('success').s_4 + 'Hash:' + hash)
+        }
+        this.prop.confirm = false
+      })
     }
   }
 }

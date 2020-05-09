@@ -15,7 +15,7 @@
           <h6 class="h6">SHORT ADDRESS</h6>
           <p class="p">{{addrNode ? addrNode : $t('tip').addNode}}</p>
           <p class="p mt-10" v-if="!addrNode">FEE 0.1 FSN</p>
-          <el-button type="primary" class="mt-10" size="mini" v-if="!addrNode">{{$t('btn').GenerateSAN}}</el-button>
+          <el-button type="primary" class="mt-10" size="mini" v-if="!addrNode" @click="createAddrNode">{{$t('btn').GenerateSAN}}</el-button>
         </li>
       </ul>
     </div>
@@ -24,7 +24,7 @@
       <div class="account-data-bg">
         <div class="account-table">
           <h3 class="title">Assets</h3>
-          <el-table :data="balanceData" style="width: 100%" :max-height="300" :empty-text="$t('warn').w_2">
+          <el-table :data="balanceData" style="width: 100%" :max-height="300" empty-text="Null">
             <el-table-column :label="$t('label').coin" align="left">
               <template slot-scope="scope">
                 <div class="flex-sc">
@@ -56,7 +56,7 @@
         <div class="account-table mt-30">
           <h3 class="title">Time-Locked Assets</h3>
           <div v-for="(items, indexs) in timelockData" :key="indexs" class="mb-30">
-            <el-table :data="items.list" style="width: 100%" :max-height="300" size="mini" :empty-text="$t('warn').w_2">
+            <el-table :data="items.list" style="width: 100%" :max-height="300" size="mini" empty-text="Null">
               <el-table-column :label="$t('label').coin" align="left">
                 <template>
                   <div class="flex-sc">
@@ -97,6 +97,12 @@
         </div>
       </div>
     </div>
+
+    <!-- 签名 start -->
+    <el-dialog :title="$t('btn').unlock" :visible.sync="prop.pwd" width="300" :before-close="cancel" :close-on-click-modal="false" :modal-append-to-body='false'>
+      <unlock v-if="prop.pwd" :txnsData='dataPage' @setPrviKey="getSignData"></unlock>
+    </el-dialog>
+    <!-- 签名 end -->
   </div>
 </template>
 
@@ -156,6 +162,10 @@ export default {
       loading: {
         init: true
       },
+      dataPage: {},
+      prop: {
+        pwd: false
+      },
       fsnId: '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
     }
   },
@@ -163,9 +173,40 @@ export default {
     this.init()
   },
   methods: {
+    cancel () {
+      this.prop.pwd = false
+    },
     init () {
       this.getHeader()
       this.initData()
+    },
+    createAddrNode () {
+      this.$$.web3.fsntx.buildGenNotationTx({
+        from: this.$store.state.address
+      }).then(res => {
+        console.log(res)
+        res.chainId = this.chainId
+        res.from = this.address
+        console.log(res)
+        this.dataPage = res
+        this.dataPage.gasLimit = res.gas
+        this.prop.pwd = true
+      })
+    },
+    getSignData (data) {
+      if (data.msg === 'Success') {
+        this.$$.web3.eth.sendSignedTransaction(data.info, (err, hash) => {
+          this.cancel()
+          if (err) {
+            this.msgError(err.toString())
+          } else {
+            console.log(hash)
+            this.msgSuccess(this.$t('success').s_4 + 'Hash:' + hash)
+          }
+        })
+      } else {
+        this.msgError(data.error)
+      }
     },
     getHeader () {
       this.headerImg = this.$$.createImg(this.$store.state.address)

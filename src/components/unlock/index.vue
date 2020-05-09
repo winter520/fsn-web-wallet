@@ -13,16 +13,16 @@
           <el-button @click="trezorToSign" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').trezor}}</el-button>
         </div>
       </li>
-      <li class="item" v-if="walletType === 'keystore'">
+      <li class="item mb-20" v-if="walletType === 'keystore'">
         <label class="label">{{$t('label').password}}:</label>
         <div class="input-box">
-          <input type="password" v-model="password" class="input-text HH100 WW100">
+          <el-input type="password" v-model="password" class="WW100"></el-input>
         </div>
       </li>
-      <li class="item" v-if="walletType === 'privateKey'">
+      <li class="item mb-20" v-if="walletType === 'privateKey'">
         <label class="label">{{$t('label').privateKey}}:</label>
         <div class="input-box">
-          <input type="password" v-model="privateKey" class="input-text HH100 WW100">
+          <el-input type="password" v-model="privateKey" class="WW100"></el-input>
         </div>
       </li>
       <li class="item" v-if="walletType === 'keystore' || walletType === 'privateKey'">
@@ -56,9 +56,9 @@ export default {
   },
   computed: {
     walletType () {
-      // return this.$store.state.walletType
+      return this.$store.state.walletType
       // return 'ledger'
-      return 'trezor'
+      // return 'trezor'
       // return 'privateKey'
     },
     address () {

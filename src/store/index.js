@@ -12,14 +12,14 @@ let lang = local || 'en-US'
 
 const store = new Vuex.Store({
   state: {
-    address: "0x80962D48724ACD9aE20DaA1cf7A0E5dE80AAE600",
-    // address: "",
+    // address: "0xdf9CAf7c7e4540C605fdF17b978A6fa896a55156",
+    address: "",
     keystore: '',
     walletType: '',
     language: lang,
-    HDPath: "m/44'/1'/0'/0/0",
+    // HDPath: "m/44'/1'/0'/0/0",
     // HDPath: "m/44'/60'/0'/0/0"
-    // HDPath: "",
+    HDPath: "",
     ksObj: {}
   },
   mutations: {
