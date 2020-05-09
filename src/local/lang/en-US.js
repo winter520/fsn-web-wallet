@@ -12,6 +12,8 @@ export default {
 		w_6: 'Please select a start time',
 		w_7: 'Login timeout, please login again!',
 		w_8: 'Your password must be at least 9 characters. Please make sure it is a strong password.',
+		w_9: "* Do NOT forget to save this!",
+		w_10: "Do you request?"
 	},
 	success: {
 		s_1: 'Connection succeeded',
@@ -34,7 +36,11 @@ export default {
 		del: 'Delete',
 		ledger: 'Connect to Ledger',
 		trezor: 'Connect to TREZOR',
-		GenerateSAN: 'Generate SAN'
+		GenerateSAN: 'Generate SAN',
+		NEXT_STEP: "Next step",
+		DOWNLOAD_KEYSTORE: "Download Keystore File (UTC / JSON)",
+		DOWNLOAD_KEYSTORE1: "Keystore File (UTC / JSON · Recommended · Encrypted)",
+		UNDERSTAND_CONTINUE: "I understand. Continue.",
 	},
 	loading: {
 		l_1: 'Loading……'
@@ -47,6 +53,8 @@ export default {
 	title: {
 		SELECT_WALLET_FILE: "Select Your Wallet File",
 		PASTE_PRIVATE_KEY: "Paste Your Private Key",
+		CREATE_NEW_WALLET: "Create New Wallet",
+		SAVE_LEYSTORE_FILE: "Save your <span>Keystore</span> File.",
 	},
 	label: {
 		null: 'Null',
@@ -68,6 +76,16 @@ export default {
 	state: {
 	},
 	action: {
+	},
+	CREATE_TIP: {
+		CREATE_TIP_0: "This password encrypts your private key. This does not act as a seed to generate your keys.",
+		CREATE_TIP_1: "You will need this password + your private key to unlock your wallet.",
+		CREATE_TIP_2: "Fusion Wallet does not hold your keys for you. We cannot access accounts, recover keys, ",
+		CREATE_TIP_3: "reset passwords, nor reverse transactions. Protect your keys & always check that you are on correct URL. You are responsible for your security."
+	},
+	SAVE_KEYSTORE_TIP: {
+		SAVE_KEYSTORE_TIP_0: "**Do not lose it!** It cannot be recovered if you lose it.<br/>**Do not share it!** Your funds will be stolen if you use this file on a malicious/phishing site.<br/>**Make a backup!** Secure it like the millions of dollars it may one day be worth.",
+		SAVE_KEYSTORE_TIP_1: "Fusion Wallet does not hold your keys for you. We cannot access accounts, recover keys,<br>reset passwords, nor reverse transactions. Protect your keys & always check that you are on correct URL. You are responsible for your security."
 	},
 	tip: {
 		net: 'U2F not supported in this browser. Please try using Google Chrome with a secure (SSL / HTTPS) connection!',

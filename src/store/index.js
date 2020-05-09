@@ -17,9 +17,10 @@ const store = new Vuex.Store({
     keystore: '',
     walletType: '',
     language: lang,
-    HDPath: "m/44'/1'/0'/0/0"
+    HDPath: "m/44'/1'/0'/0/0",
     // HDPath: "m/44'/60'/0'/0/0"
-    // HDPath: ""
+    // HDPath: "",
+    ksObj: {}
   },
   mutations: {
     setAddress (state, data) {
@@ -41,6 +42,9 @@ const store = new Vuex.Store({
     },
     setHDPath (state, data) {
       state.HDPath = data
+    },
+    setKsObj (state, data) {
+      state.ksObj = data
     },
   },
 })

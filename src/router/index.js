@@ -22,10 +22,11 @@ const routers = new Router({
 
 routers.beforeEach((to, from, next) => {
   const token = store.state.address
+  // console.log(token)
   if (token) {
     next()
   } else {
-    if (to.path === '/' || to.path === '/register' || to.path === '/login') {
+    if (to.path === '/' || to.path === '/register' || to.path === '/login' || to.path === '/saveKeystore') {
       next()
     } else {
       next('/')

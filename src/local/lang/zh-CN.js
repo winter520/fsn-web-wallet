@@ -13,6 +13,8 @@ export default {
 		w_6: '请选择开始时间',
 		w_7: '登陆超时请重新登陆！',
 		w_8: '您的密码必须至少9个字符。请确保它是一个强密码。',
+		w_9: "* 不要忘记保存这个！",
+		w_10: "你要申请DCRM地址吗"
 	},
 	success: {
 		s_1: '连接成功！',
@@ -36,7 +38,11 @@ export default {
 		ledger: '连接到Ledger Wallet',
 		trezor: '连接到TREZOR',
 		SELECT_WALLET_FILE: "选择钱包文件...",
-		GenerateSAN: '生成短账号'
+		GenerateSAN: '生成短账号',
+		NEXT_STEP: "下一步",
+		DOWNLOAD_KEYSTORE: "下载 密钥存储库 文件 (UTC / JSON)",
+		DOWNLOAD_KEYSTORE1: "密钥存储库 文件 (UTC / JSON · Recommended · Encrypted)",
+		UNDERSTAND_CONTINUE: "我明白了。继续下去",
 	},
 	loading: {
 		l_1: '加载中……'
@@ -49,6 +55,8 @@ export default {
 	title: {
 		SELECT_WALLET_FILE: "选择你的钱包文件",
 		PASTE_PRIVATE_KEY: "私钥",
+		CREATE_NEW_WALLET: "创建新钱包",
+		SAVE_LEYSTORE_FILE: "保存你的 <span>密钥存储库</span> 文件.",
 	},
 	label: {
 		null: '无',
@@ -70,6 +78,16 @@ export default {
 	state: {
 	},
 	action: {
+	},
+	CREATE_TIP: {
+		CREATE_TIP_0: "这个密码加密您的私钥。这不是生成键的种子。",
+		CREATE_TIP_1: "你需要这个密码和你的私人钥匙才能解锁你的钱包",
+		CREATE_TIP_2: "Fusion钱包不会帮你保管钥匙。我们无法访问帐户，恢复密钥，",
+		CREATE_TIP_3: "重置密码，或反向事务。保护你的钥匙&总是检查你在正确的URL。你要对你的安全负责。"
+	},
+	SAVE_KEYSTORE_TIP: {
+		SAVE_KEYSTORE_TIP_0: "**不要失去它!如果你把它弄丢了，就无法找回来。**不要分享!**如果您在恶意/钓鱼网站使用此文件，您的资金将被窃取。<br/>* *有备份!就像它有一天可能值几百万美元一样，好好保管它。",
+		SAVE_KEYSTORE_TIP_1: "Fusion钱包不会帮你保管钥匙。我们不能访问帐户，恢复密钥，重置密码，或反向交易。保护你的钥匙&总是检查你在正确的URL。你要对你的安全负责。"
 	},
 	tip: {
 		net: '此浏览器不支持U2F。请尝试使用带有安全（ssl/https）连接的Google Chrome！',
