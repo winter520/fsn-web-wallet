@@ -1,5 +1,5 @@
 <template>
-  <div class="boxConntent1 container">
+  <div class="boxConntent1 container" v-loading="loading.init" element-loading-text="Loading...">
     <div class="form-box HH100 pt-30">
       <ul class="ul">
         <li class="item">
@@ -151,21 +151,17 @@ export default {
         value: 0.1
       },
       balance: 0,
-      formTimeKey: '',
       minDate: new Date(),
       maxDate: new Date('3333-12-30'),
       prop: {
-        startTime: false,
-        endTime: false,
-        beginTime: false,
         pwd: false,
         confirm: false,
-        address: false,
-        month: false
       },
       privateKey: '',
       password: '',
-      signTx: '',
+      loading: {
+        init: true
+      },
       assetId: '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
       chainId: this.$$.web3.utils.toHex('46688'),
       urlParams: '',
@@ -249,6 +245,7 @@ export default {
     } else {
       this.chainId = this.$$.web3.utils.toHex('32659')
     }
+    this.loading.init = false
   },
   methods: {
     onTabClick () {
@@ -262,11 +259,6 @@ export default {
       // this.formData = {}
       this.prop.confirm = false
       this.prop.pwd = false
-      this.prop.beginTime = false
-      this.prop.endTime = false
-      this.prop.startTime = false
-      this.prop.month = false
-      this.signTx = ''
       this.password = ''
       this.privateKey = ''
     },
@@ -331,6 +323,7 @@ export default {
         this.msgWarning(this.$t('warn').w_6)
         return
       }
+      this.loading.init = true
       this.formData.to = this.formData.to.replace(/\s/, '')
       // this.prop.pwd = true
       this.toSign()
@@ -353,27 +346,6 @@ export default {
           this.TimeLockToTimeLockSign('Forever')
         }
       }
-      // if (data.state) {
-      //   if (this.sendType === '0') {
-      //     if (this.activeName === 'a') {
-      //       this.AssetToAssetSign(data.info)
-      //     } else if (this.activeName === 'b') {
-      //       this.AssetToTimeLockSign(data.info)
-      //     } else {
-      //       this.AssetToTimeLockSign(data.info, 'Forever')
-      //     }
-      //   } else {
-      //     if (this.activeName === 'a') {
-      //       this.TimeLockToAssetSign(data.info)
-      //     } else if (this.activeName === 'b') {
-      //       this.TimeLockToTimeLockSign(data.info)
-      //     } else {
-      //       this.TimeLockToTimeLockSign(data.info, 'Forever')
-      //     }
-      //   }
-      // } else {
-      //   this.msgWarning(data.info)
-      // }
     },
     AssetToAssetSign () {
       this.buildTxnsAndSign('buildSendAssetTx')
@@ -427,7 +399,7 @@ export default {
       this.buildTxnsAndSign('buildTimeLockToAssetTx', startTime, endTime)
     },
     buildTxnsAndSign (param, startTime, endTime) {
-      console.log(this.formData.value)
+      // console.log(this.formData.value)
       let rawTx = {
         from: this.address,
         to: this.formData.to.replace(/\s/, ''),
@@ -440,7 +412,7 @@ export default {
       if (endTime) {
         rawTx.end = endTime
       }
-      console.log(rawTx)
+      // console.log(rawTx)
       this.$$.web3.fsntx[param]({
         ...rawTx
       }).then(res => {
@@ -451,13 +423,8 @@ export default {
         console.log(res)
         this.dataPage = res
         this.dataPage.gasLimit = res.gas
+        this.loading.init = false
         this.prop.pwd = true
-        // let tx = new Tx(res)
-        // tx.sign(pwd)
-        // this.signTx = tx.serialize().toString("hex")
-        // this.signTx = this.signTx.indexOf("0x") === 0 ? this.signTx : ("0x" + this.signTx)
-        // this.prop.confirm = true
-        // console.log(this.signTx)
       }).catch(err => {
         this.msgError(err.toString())
       })
@@ -472,9 +439,11 @@ export default {
             console.log(hash)
             this.msgSuccess(this.$t('success').s_4 + 'Hash:' + hash)
           }
+          this.prop.pwd = false
         })
       } else {
         this.msgError(data.error)
+        this.prop.pwd = false
       }
     }
   }

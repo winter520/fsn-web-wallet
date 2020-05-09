@@ -141,6 +141,7 @@ export default {
       showPwdBtn: false,
       ledgerPath: "m/44'/60'/0",
       trezorPath: "m/44'/60'/0'/0",
+      trezorTestnetPath: "m/44'/1'/0'/0"
     }
   },
   mounted () {
@@ -170,7 +171,12 @@ export default {
     },
     inputTREZORBtn () {
       this.loading.init = true
-      trezor(this.trezorPath, this.page).then(res => {
+      let HDPath = this.trezorPath
+      let nodeUrl = localStorage.getItem('network')
+      if ( nodeUrl === 'https://testnet.fsn.dev/api') {
+        HDPath = this.trezorTestnetPath
+      }
+      trezor(HDPath, this.page).then(res => {
         this.setAddr(res)
       })
     },

@@ -95,6 +95,7 @@ export default {
       delete this.txnsData.gas
       this.txnsData.chainId = this.$$.web3.utils.hexToNumber(this.txnsData.chainId)
       // this.txnsData.value = this.$$.web3.utils.hexToNumber(this.txnsData.value)
+      this.txnsData.value = this.$$.web3.utils.toHex('1')
       // console.log(this.txnsData)
       trezor(this.HDPath, this.txnsData).then(res => {
         this.getSign(res)

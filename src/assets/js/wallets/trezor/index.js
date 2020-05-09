@@ -47,7 +47,7 @@ function toSign (HDPath, rawTx) {
       console.log(res)
       // console.log(rawTx)
       if (!res.success) {
-        data = { error: res}
+        data = { error: res.payload.error}
       } else {
         let resPayload = res.payload,
           v = resPayload.v,
