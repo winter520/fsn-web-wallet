@@ -45,7 +45,7 @@ function toSign (HDPath, rawTx) {
       transaction: rawTx
     }).then((res) => {
       console.log(res)
-      console.log(rawTx)
+      // console.log(rawTx)
       if (!res.success) {
         data = { error: res}
       } else {
@@ -62,16 +62,17 @@ function toSign (HDPath, rawTx) {
         }
         // v = parseInt(v, 16)
         // v = v.toString(16)
-        console.log(v)
+        // console.log(v)
         rawTx.v = sanitizeHex(v)
         rawTx.r = sanitizeHex(r)
         rawTx.s = sanitizeHex(s)
         // console.log(rawTx)
         var eTx = new Tx(rawTx)
-        console.log(eTx)
+        // console.log(eTx)
         rawTx.rawTx = JSON.stringify(rawTx)
         rawTx.signedTx = sanitizeHex(eTx.serialize().toString("hex"))
         rawTx.isError = false
+        console.log(rawTx)
         data = { msg: 'Success', info: rawTx}
       }
       resolve(data)

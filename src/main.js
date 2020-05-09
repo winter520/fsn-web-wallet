@@ -130,6 +130,9 @@ Vue.prototype.msgWarning = function(txt) {
   })
 }
 
+import unlock from '@c/unlock/index'
+Vue.component('unlock', unlock)
+
 new Vue({
   router,
   store,

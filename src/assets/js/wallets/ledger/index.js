@@ -24,14 +24,14 @@ function getAddressArr (HDPath, page) {
   })
 }
 
-function signTxLedger (app, eTx, rawTx, txData, old) {
+function signTxLedger (app, eTx, rawTx, HDPath, old) {
   return new Promise(resolve => {
     let data = { msg: 'Error', info: ''}
     eTx.raw[6] = rawTx.chainId
     eTx.raw[7] = eTx.raw[8] = 0
     let toHash = old ? eTx.raw.slice(0, 6) : eTx.raw
     let txToSign = ethUtil.rlp.encode(toHash)
-    app.signTransaction(txData.path, txToSign.toString('hex'), (result, error) => {
+    app.signTransaction(HDPath, txToSign.toString('hex'), (result, error) => {
       // console.log(result)
       // console.log(error)
       if (typeof error != "undefined") {
@@ -65,7 +65,7 @@ function signTxLedger (app, eTx, rawTx, txData, old) {
 
 function toSign (HDPath, rawTx) {
   return new Promise(resolve => {
-    let eTx = new ethUtil.Tx(txData)
+    let eTx = new ethUtil.Tx(rawTx)
     let EIP155Supported = false
     app.getAppConfiguration((result, error) => {
       // console.log(result)
@@ -82,7 +82,7 @@ function toSign (HDPath, rawTx) {
       } else if (parseInt(splitVersion[2]) > 2) {
           EIP155Supported = true;
       }
-      signTxLedger(app, eTx, rawTx, txData, !EIP155Supported).then(res => {
+      signTxLedger(app, eTx, rawTx, HDPath, !EIP155Supported).then(res => {
         resolve(res)
       })
     })

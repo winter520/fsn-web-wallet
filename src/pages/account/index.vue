@@ -24,7 +24,7 @@
       <div class="account-data-bg">
         <div class="account-table">
           <h3 class="title">Assets</h3>
-          <el-table :data="balanceData" style="width: 100%" :empty-text="$t('warn').w_2">
+          <el-table :data="balanceData" style="width: 100%" :max-height="300" :empty-text="$t('warn').w_2">
             <el-table-column :label="$t('label').coin" align="left">
               <template slot-scope="scope">
                 <div class="flex-sc">
@@ -56,7 +56,7 @@
         <div class="account-table mt-30">
           <h3 class="title">Time-Locked Assets</h3>
           <div v-for="(items, indexs) in timelockData" :key="indexs" class="mb-30">
-            <el-table :data="items.list" style="width: 100%" :empty-text="$t('warn').w_2">
+            <el-table :data="items.list" style="width: 100%" :max-height="300" size="mini" :empty-text="$t('warn').w_2">
               <el-table-column :label="$t('label').coin" align="left">
                 <template>
                   <div class="flex-sc">
@@ -89,7 +89,7 @@
               </el-table-column>
               <el-table-column :label="$t('label').action" align="right">
                 <template slot-scope="scope">
-                  <el-button type="primary" size="mini" @click="toUrl('/send', {id: scope.row.id, balance: scope.row.balance, type: '0'})">{{$t('btn').send}}</el-button>
+                  <el-button type="primary" size="mini" @click="toUrl('/send', {id: scope.row.id, balance: scope.row.Value, StartTime: scope.row.StartTime, EndTime: scope.row.EndTime, type: '1'})">{{$t('btn').send}}</el-button>
                 </template>
               </el-table-column>
             </el-table>

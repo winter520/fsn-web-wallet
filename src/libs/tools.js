@@ -6,6 +6,7 @@ import Identicon from 'identicon.js'
  * @description 二维码
  */
 import QRCode from 'qrcodejs2'
+
 export default {
   fromTime (timestamp) {
     if (timestamp.toString().length === 10) {

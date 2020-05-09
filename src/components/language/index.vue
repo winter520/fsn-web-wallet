@@ -1,6 +1,6 @@
 <template>
   <div class="header-top-lang">
-    <el-select v-model="language" size="mini" @change="changLanguage">
+    <el-select v-model="lang" size="mini" @change="changLanguage">
       <el-option
         v-for="item in languageOption"
         :key="item.value"
@@ -26,11 +26,21 @@ export default {
   name: 'language',
   data () {
     return {
-      language: this.$i18n.locale,
+      lang: this.$i18n.locale,
       languageOption: [
         {value: 'en-US', label: 'English'},
         {value: 'zh-CN', label: '中文简体'}
       ],
+    }
+  },
+  watch: {
+    language () {
+      this.lang = this.language
+    }
+  },
+  computed: {
+    language () {
+      return this.$store.state.language
     }
   },
   mounted () {
@@ -38,7 +48,9 @@ export default {
   },
   methods: {
     changLanguage () {
-
+      this.$i18n.locale = this.lang
+      this.$store.commit('setLanguage', {info: this.lang})
+      this.$emit('changeLang')
     }
   }
 }

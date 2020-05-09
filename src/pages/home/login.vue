@@ -139,7 +139,8 @@ export default {
       page: 0,
       isShowTip: true,
       showPwdBtn: false,
-      HDPath: "m/44'/1'/0'/0"
+      ledgerPath: "m/44'/60'/0",
+      trezorPath: "m/44'/60'/0'/0",
     }
   },
   mounted () {
@@ -163,13 +164,13 @@ export default {
     },
     inputLEDGERBtn () {
       this.loading.init = true
-      ledger(this.HDPath, this.page).then(res => {
+      ledger(this.ledgerPath, this.page).then(res => {
         this.setAddr(res)
       })
     },
     inputTREZORBtn () {
       this.loading.init = true
-      trezor(this.HDPath, this.page).then(res => {
+      trezor(this.trezorPath, this.page).then(res => {
         this.setAddr(res)
       })
     },
@@ -204,6 +205,12 @@ export default {
         this.msgError(e)
         return
       }
+      for (let obj of this.addrList) {
+        if (obj.addr === this.selectAddr) {
+          this.$store.commit("setHDPath", obj.path)
+          break
+        }
+      }
       this.unlockWallet(this.selectAddr)
     },
     fileUpChange (event) {
@@ -228,6 +235,7 @@ export default {
           this.fileData,
           this.password
         )
+        console.log(this.walletInfo.getPrivateKeyString())
         this.$store.commit("setKeystore", this.fileData)
         this.unlockWallet(this.walletInfo.getChecksumAddressString())
       } catch (e) {

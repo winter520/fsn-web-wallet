@@ -4,8 +4,14 @@ export default {
 	error: {
 	},
 	warn: {
-		w_1: 'Please select account',
-		w_2: 'Data is empty!'
+		w_1: 'Incorrect address',
+		w_2: 'Address cannot be empty',
+		w_3: 'Value cannot be empty',
+		w_4: 'Please select a time!',
+		w_5: 'Please select a month!',
+		w_6: 'Please select a start time',
+		w_7: 'Login timeout, please login again!',
+		w_8: 'Your password must be at least 9 characters. Please make sure it is a strong password.',
 	},
 	success: {
 		s_1: 'Connection succeeded',
@@ -56,6 +62,8 @@ export default {
 		selectTime: 'Select Time',
 		months: 'Months',
 		forever: 'Forever',
+		password: 'Password',
+		privateKey: 'Private Key',
 	},
 	state: {
 	},

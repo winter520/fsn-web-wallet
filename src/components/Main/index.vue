@@ -1,5 +1,5 @@
 <template>
-  <div class="boxContent main-box">
+  <div class="boxContent main-box" v-if="isReload">
     <header class="header-box flex-bc">
       <div class="flex-sc">
         <div class="logo"><img src="@/assets/img/logo/fsn-logo.svg"></div>
@@ -16,7 +16,7 @@
         </ul>
       </div>
       <div class="flex-ec">
-        <language></language>
+        <language @changeLang="refresh"></language>
         <div class="headerTop_serBox">
           <img src="@/assets/img/wifi.png" class="wifi">
           <i class="arrow"></i>
@@ -91,7 +91,8 @@ export default {
         {name: 'Testnet', url: 'https://testnet.fsn.dev/api'},
       ],
       newsActive: '',
-      network: this.$$.serverURL
+      network: this.$$.serverURL,
+      isReload: true,
     }
   },
   components: {language},
@@ -108,6 +109,7 @@ export default {
     changNetwork () {
       this.$$.web3.setProvider(this.network)
       localStorage.setItem('network', this.network)
+      this.refresh()
     },
     newsView (cur) {
       if (cur.path.indexOf('register') !== -1) {
@@ -125,6 +127,12 @@ export default {
       this.$store.commit("setKeystore", "")
       this.$store.commit("setWalletType", "")
       this.toUrl(url)
+    },
+    refresh () {
+      this.isReload = false
+      this.$nextTick(() => {
+        this.isReload = true
+      })
     }
   }
 }
