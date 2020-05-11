@@ -39,7 +39,7 @@
 <script>
 let Tx = require('ethereumjs-tx')
 import {toSign as ledger} from '@/assets/js/wallets/ledger/index.js'
-import {toSign as trezor} from '@/assets/js/wallets/trezor/index.js'
+import {toSign as trezor, getRSV} from '@/assets/js/wallets/trezor/index.js'
 export default {
   name: 'unlock',
   props: ['txnsData'],
@@ -92,14 +92,42 @@ export default {
       })
     },
     trezorToSign () {
-      delete this.txnsData.gas
-      this.txnsData.chainId = this.$$.web3.utils.hexToNumber(this.txnsData.chainId)
-      // this.txnsData.value = this.$$.web3.utils.hexToNumber(this.txnsData.value)
-      this.txnsData.value = this.$$.web3.utils.toHex('1')
-      // console.log(this.txnsData)
-      trezor(this.HDPath, this.txnsData).then(res => {
-        this.getSign(res)
+      let rawTx = {
+        nonce: this.txnsData.nonce,
+        gasPrice: this.txnsData.gasPrice,
+        gasLimit: this.txnsData.gas,
+        from: this.txnsData.from,
+        to: this.txnsData.to,
+        value: this.txnsData.value,
+        input: this.txnsData.input,
+        chainId: this.$$.web3.utils.hexToNumber(this.txnsData.chainId),
+        // chainId: this.txnsData.chainId,
+        // chainId: 4
+      }
+      // let rawTx = this.txnsData
+      getRSV(this.HDPath, this.txnsData.hash).then(res => {
+        console.log(res)
+        let sig = res.info.signature
+        rawTx.r = "0x" + sig.substr(0, 64)
+        rawTx.s = "0x" + sig.substr(64, 64)
+        rawTx.v = "0x" + sig.substr(128, 2)
+        // rawTx.v = "0x16ce3"
+        let tx = new Tx(rawTx)
+        console.log(rawTx)
+        let signtx = tx.serialize().toString('hex')
+        this.signData.msg = 'Success'
+        this.signData.info = '0x' + signtx
+        this.backSign()
       })
+      // // delete this.txnsData.gas
+      // // delete this.txnsData.chainId
+      // // this.txnsData.chainId = this.$$.web3.utils.hexToNumber(this.txnsData.chainId)
+      // // this.txnsData.value = this.$$.web3.utils.hexToNumber(this.txnsData.value)
+      // // this.txnsData.value = this.$$.web3.utils.toHex('1')
+      // // console.log(this.txnsData)
+      // trezor(this.HDPath, rawTx).then(res => {
+      //   this.getSign(res)
+      // })
     },
     getSign (res) {
       console.log(res)

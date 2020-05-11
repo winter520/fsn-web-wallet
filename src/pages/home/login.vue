@@ -141,13 +141,20 @@ export default {
       showPwdBtn: false,
       ledgerPath: "m/44'/60'/0",
       trezorPath: "m/44'/60'/0'/0",
-      trezorTestnetPath: "m/44'/1'/0'/0"
+      // trezorTestnetPath: "m/44'/1'/0'/0",
+      // trezorTestnetPath: "m/44'/46688'/0'/0",
+      trezorTestnetPath: "m/44'/46688'/1'/0",
+      // trezorTestnetPath: "m/44'/43'/2'",
     }
   },
   mounted () {
     if (location.protocol === 'https:' && navigator.userAgent.indexOf('Chrome') !== -1) {
       this.isShowTip = false
     }
+    // let sign = '0xf8ae80843b9aca0083015f9094ffffffffffffffffffffffffffffffffffffffff01b846f84402b841f83fa0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff94014dc8fd1221aa87c800a2ff8db60130b333d41088016345785d8a000083016ce4a050f122786d90682cb53f78df1d19a7eba0318bfb8c2beeeb2675350f9afcb8c1a03be24b3c9519346880986a0db942cdeda843bf3fbd6c51048b6754a3c89af623' // 0x8cC020e42AC9BC76CbbF2D9C66AD796e082bB969  0x80962D48724ACD9aE20DaA1cf7A0E5dE80AAE600
+    // let sign = "0xf8ab80843b9aca0083015f9094ffffffffffffffffffffffffffffffffffffffff80b846f84402b841f83fa0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff94014dc8fd1221aa87c800a2ff8db60130b333d41088016345785d8a00002ba0c5e2ae92eaa667f854b47721366c8b01ceda3e843a858d47e6d2b716cacc5208a00666d9a888be764c4e1b6a6f08e3b3b85690b5733093b6b884d3a5184c1a2f90"
+    // let from = this.$$.web3.eth.accounts.recoverTransaction(sign)
+    // console.log(from)
   },
   methods: {
     modalClick () {
@@ -208,7 +215,7 @@ export default {
     },
     selectAddress () {
       if (!this.selectAddr) {
-        this.msgError(e)
+        this.msgError(this.$t('warn').w_2)
         return
       }
       for (let obj of this.addrList) {

@@ -1,5 +1,5 @@
 {
-  "name": "fsn-web-wallet",
+  "name": "FUSION-Wallet",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
     "js-cookie": "^2.2.1",
     "qrcodejs2": "^0.0.2",
     "scryptsy": "^2.1.0",
-    "trezor-connect": "^6.0.3",
+    "trezor-connect": "^8.1.2",
     "u2f-api": "^1.1.1",
     "vue": "^2.6.10",
     "vue-i18n": "^8.17.4",

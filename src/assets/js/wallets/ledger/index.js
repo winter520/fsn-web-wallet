@@ -53,7 +53,7 @@ function signTxLedger (app, eTx, rawTx, HDPath, old) {
         rawTx.r = "0x" + result['r'];
         rawTx.s = "0x" + result['s'];
         eTx = new ethUtil.Tx(rawTx);
-        rawTx.rawTx = JSON.stringify(rawTx);
+        // rawTx.rawTx = JSON.stringify(rawTx);
         rawTx.signedTx = '0x' + eTx.serialize().toString('hex');
         rawTx.isError = false
         data = { msg: 'Success', info: rawTx}
