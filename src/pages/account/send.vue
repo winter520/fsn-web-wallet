@@ -164,10 +164,10 @@ export default {
     }
   },
   watch: {
-    'formData.startTime' () {
-      console.log(123)
-      this.formData.endTime = ''
-    }
+    // 'formData.startTime' () {
+    //   console.log(123)
+    //   this.formData.endTime = ''
+    // }
   },
   computed: {
     address () {
@@ -223,12 +223,6 @@ export default {
         }
       }
     }
-    // let nodeUrl = localStorage.getItem('network')
-    // if ( nodeUrl === 'https://testnet.fsn.dev/api') {
-    //   this.chainId = this.$$.web3.utils.toHex('46688')
-    // } else {
-    //   this.chainId = this.$$.web3.utils.toHex('32659')
-    // }
     this.loading.init = false
   },
   methods: {
