@@ -13,16 +13,17 @@ let lang = local || 'en-US'
 const store = new Vuex.Store({
   state: {
     // address: "0x80962D48724ACD9aE20DaA1cf7A0E5dE80AAE600",
-    // address: "0xe35da89D6e92C0C67F767bc4c4c8Cc7156E55D6c",
+    // address: "0x3f28E90ccd1a91cA06bf8E57B0D558F3f383506D",
     address: "",
     keystore: '',
     walletType: '',
+    // walletType: 'trezor',
     language: lang,
     HDPath: "",
     // HDPath: "m/44'/1'/0'/0/0",
     // HDPath: "m/44'/46688'/0'/0/0",
-    // HDPath: "m/44'/60'/0'/0/0",
-    // HDPath: "",
+    // HDPath: "m/44'/46688'/1'/0/0",
+    HDPath: "",
     ksObj: {}
   },
   mutations: {

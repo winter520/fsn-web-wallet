@@ -3,19 +3,19 @@ import walletCreate from '../public/walletCreate.js'
 import TrezorConnect from 'trezor-connect'
 const Tx  = require("ethereumjs-tx")
 
-TrezorConnect.init({
-  connectSrc: 'https://connect.trezor.io/8/',
-  lazyLoad: false, // this param will prevent iframe injection until TrezorConnect.method will be called
-  manifest: {
-    email: '2624376436@qq.com',
-    appUrl: 'https://localhost:8080',
-  }
-})
-
-// TrezorConnect.manifest({
-//   email: '2624376436@qq.com',
-//   appUrl: 'https://localhost:8080',
+// TrezorConnect.init({
+//   connectSrc: 'https://connect.trezor.io/8/',
+//   lazyLoad: false, // this param will prevent iframe injection until TrezorConnect.method will be called
+//   manifest: {
+//     email: '2624376436@qq.com',
+//     appUrl: 'https://localhost:8080',
+//   }
 // })
+
+TrezorConnect.manifest({
+  email: '2624376436@qq.com',
+  appUrl: 'https://localhost:8080',
+})
 
 let getAddrRes = ''
 function getAddressArr (HDPath, page) {
@@ -80,17 +80,10 @@ function toSign (HDPath, rawTx) {
           // for larger chainId, only signature_v returned. simply recalc signature_v
           v += 2 * rawTx.chainId + 35
         }
-        // v = parseInt(v, 16)
-        // v = v.toString(16)
-        // console.log(v)
-        // rawTx.v = '0x16ce3'
         rawTx.v = sanitizeHex(v)
         rawTx.r = sanitizeHex(r)
         rawTx.s = sanitizeHex(s)
-        // console.log(rawTx)
         var eTx = new Tx(rawTx)
-        // console.log(eTx)
-        // rawTx.rawTx = JSON.stringify(rawTx)
         rawTx.signedTx = sanitizeHex(eTx.serialize().toString("hex"))
         rawTx.isError = false
         console.log(rawTx)
@@ -101,27 +94,7 @@ function toSign (HDPath, rawTx) {
   })
 }
 
-function getRSV (HDPath, hash) {
-  console.log(HDPath)
-  console.log(hash)
-  return new Promise(resolve => {
-    let data = { msg: 'Error', info: ''}
-    TrezorConnect.ethereumSignMessage({
-      path: HDPath,
-      message: hash
-    }).then((res) => {
-      if (!res.success) {
-        data = { error: res.payload.error}
-      } else {
-        data = { msg: 'Success', info: res.payload}
-      }
-      resolve(data)
-    })
-  })
-}
-
 export {
   getAddressArr,
   toSign,
-  getRSV
 }

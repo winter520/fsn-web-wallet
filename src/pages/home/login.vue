@@ -1,5 +1,5 @@
 <template>
-  <div class="boxConntent1 container flex-c" v-loading="loading.init" element-loading-text="Loading...">
+  <div class="boxConntent1 container flex-c"  v-loading.fullscreen.lock="loading.init" element-loading-text="Loading...">
     <div class="tab-box">
       <el-tabs tab-position="left" v-model="activeTabs" @tab-click="modalClick">
         <el-tab-pane label="Ledger Wallet" name="ledger">
@@ -8,7 +8,7 @@
           </hgroup>
           <div class="selectType_contentBox">
             <div class="createInfo_btn flex-c" v-if="!isShowTip">
-              <el-button class="W240 mt-10" @click="inputLEDGERBtn" type="primary">{{$t('btn').ledger}}</el-button>
+              <el-button class="W240 mt-10" @click="eDialog.path = true" type="primary">{{$t('btn').ledger}}</el-button>
             </div>
           </div>
           <div class="selectType_contTip" v-if="isShowTip">
@@ -21,7 +21,7 @@
           </hgroup>
           <div class="selectType_contentBox">
             <div class="createInfo_btn flex-c">
-              <el-button class="W240 mt-10" @click="inputTREZORBtn" type="primary">{{$t('btn').trezor}}</el-button>
+              <el-button class="W240 mt-10" @click="eDialog.path = true" type="primary">{{$t('btn').trezor}}</el-button>
             </div>
           </div>
         </el-tab-pane>
@@ -59,6 +59,17 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+
+    <el-dialog :title="$t('tip').selectPath" :visible.sync="eDialog.path" width="300" :before-close="modalClick" :close-on-click-modal="false" :modal-append-to-body='false'>
+      <div>
+        <p>{{$t('tip').selectAddr}}</p>
+        <el-input v-model="HDPath"></el-input>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="info" size="small" @click="modalClick">{{$t('btn').cancel}}</el-button>
+        <el-button type="primary" size="small" @click="openHDwallet">{{$t('btn').confirm}}</el-button>
+      </span>
+    </el-dialog>
 
     <el-dialog :title="$t('tip').selectAddr" :visible.sync="eDialog.addr" width="300" :before-close="modalClick" :close-on-click-modal="false" :modal-append-to-body='false'>
       <div class="selectAddr_type">
@@ -128,7 +139,8 @@ export default {
         init: false
       },
       eDialog: {
-        addr: false
+        addr: false,
+        path: false
       },
       addrList: [],
       password: '',
@@ -139,26 +151,24 @@ export default {
       page: 0,
       isShowTip: true,
       showPwdBtn: false,
-      ledgerPath: "m/44'/60'/0",
-      trezorPath: "m/44'/60'/0'/0",
+      HDPath: "m/44'/46688'/0'/0"
+      // ledgerPath: "m/44'/60'/0",
+      // trezorPath: "m/44'/60'/0'/0",
       // trezorTestnetPath: "m/44'/1'/0'/0",
       // trezorTestnetPath: "m/44'/46688'/0'/0",
-      trezorTestnetPath: "m/44'/46688'/1'/0",
-      // trezorTestnetPath: "m/44'/43'/2'",
+      // trezorTestnetPath: "m/44'/46688'/1'/0",
+      // trezorTestnetPath: "m/44'/1'/0'/0",
     }
   },
   mounted () {
     if (location.protocol === 'https:' && navigator.userAgent.indexOf('Chrome') !== -1) {
       this.isShowTip = false
     }
-    // let sign = '0xf8ae80843b9aca0083015f9094ffffffffffffffffffffffffffffffffffffffff01b846f84402b841f83fa0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff94014dc8fd1221aa87c800a2ff8db60130b333d41088016345785d8a000083016ce4a050f122786d90682cb53f78df1d19a7eba0318bfb8c2beeeb2675350f9afcb8c1a03be24b3c9519346880986a0db942cdeda843bf3fbd6c51048b6754a3c89af623' // 0x8cC020e42AC9BC76CbbF2D9C66AD796e082bB969  0x80962D48724ACD9aE20DaA1cf7A0E5dE80AAE600
-    // let sign = "0xf8ab80843b9aca0083015f9094ffffffffffffffffffffffffffffffffffffffff80b846f84402b841f83fa0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff94014dc8fd1221aa87c800a2ff8db60130b333d41088016345785d8a00002ba0c5e2ae92eaa667f854b47721366c8b01ceda3e843a858d47e6d2b716cacc5208a00666d9a888be764c4e1b6a6f08e3b3b85690b5733093b6b884d3a5184c1a2f90"
-    // let from = this.$$.web3.eth.accounts.recoverTransaction(sign)
-    // console.log(from)
   },
   methods: {
     modalClick () {
       this.eDialog.addr = false
+      this.eDialog.path = false
       this.page = 0
       this.addrList = []
       this.password = ''
@@ -170,20 +180,24 @@ export default {
       document.getElementById("fileName").innerHTML = this.$t('btn').SELECT_WALLET_FILE
       document.getElementById("fileUpload").value = ''
     },
+    openHDwallet () {
+      if (this.activeTabs === 'ledger') {
+        this.inputLEDGERBtn()
+      } else if (this.activeTabs === 'trezor') {
+        this.inputTREZORBtn()
+      }
+    },
     inputLEDGERBtn () {
       this.loading.init = true
-      ledger(this.ledgerPath, this.page).then(res => {
+      ledger(this.HDPath, this.page).then(res => {
+        this.eDialog.path = false
         this.setAddr(res)
       })
     },
     inputTREZORBtn () {
       this.loading.init = true
-      let HDPath = this.trezorPath
-      let nodeUrl = localStorage.getItem('network')
-      if ( nodeUrl === 'https://testnet.fsn.dev/api') {
-        HDPath = this.trezorTestnetPath
-      }
-      trezor(HDPath, this.page).then(res => {
+      trezor(this.HDPath, this.page).then(res => {
+        this.eDialog.path = false
         this.setAddr(res)
       })
     },

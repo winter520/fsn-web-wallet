@@ -131,7 +131,7 @@ export default {
       formData: {
         month: 3,
         // to: '0x014DC8Fd1221AA87C800A2fF8dB60130b333D410',
-        // value: 0.1
+        // value: 0.00001
       },
       balance: 0,
       minDate: new Date(),
@@ -230,10 +230,6 @@ export default {
       this.chainId = this.$$.web3.utils.toHex('32659')
     }
     this.loading.init = false
-
-    // let sign = "0xf8ab80843b9aca0083015f9094ffffffffffffffffffffffffffffffffffffffff80b846f84402b841f83fa0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff94014dc8fd1221aa87c800a2ff8db60130b333d41088016345785d8a00001ca076b1c26255e34e63c716a83ee86de18ebc13ff2753cb152f30be58ea53b6f3cba04849ae81bcd0708cebfe6a670a0c170d314be86dba6876498c440bb8aec9bd21"
-    // let from = this.$$.web3.eth.accounts.recoverTransaction(sign)
-    // console.log(from)
   },
   methods: {
     onTabClick () {
