@@ -151,16 +151,24 @@ export default {
       page: 0,
       isShowTip: true,
       showPwdBtn: false,
-      HDPath: "m/44'/46688'/0'/0"
-      // ledgerPath: "m/44'/60'/0",
-      // trezorPath: "m/44'/60'/0'/0",
-      // trezorTestnetPath: "m/44'/1'/0'/0",
-      // trezorTestnetPath: "m/44'/46688'/0'/0",
-      // trezorTestnetPath: "m/44'/46688'/1'/0",
-      // trezorTestnetPath: "m/44'/1'/0'/0",
+      HDPath: "m/44'/32659'/0'/0"
+    }
+  },
+  watch: {
+    networkUrl (nodeUrl) {
+      if ( nodeUrl === 'https://testnet.fsn.dev/api') {
+        this.HDPath = "m/44'/46688'/0'/0"
+      }
+      this.HDPath = localStorage.getItem('HDPath') ? localStorage.getItem('HDPath') : this.HDPath
+    }
+  },
+  computed: {
+    networkUrl () {
+      return this.$store.state.network
     }
   },
   mounted () {
+    this.HDPath = localStorage.getItem('HDPath') ? localStorage.getItem('HDPath') : this.HDPath
     if (location.protocol === 'https:' && navigator.userAgent.indexOf('Chrome') !== -1) {
       this.isShowTip = false
     }
@@ -238,6 +246,7 @@ export default {
           break
         }
       }
+      localStorage.setItem('HDPath', this.HDPath)
       this.unlockWallet(this.selectAddr)
     },
     fileUpChange (event) {

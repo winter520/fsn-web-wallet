@@ -55,6 +55,7 @@ export default {
 		PASTE_PRIVATE_KEY: "Paste Your Private Key",
 		CREATE_NEW_WALLET: "Create New Wallet",
 		SAVE_LEYSTORE_FILE: "Save your <span>Keystore</span> File.",
+		custom: 'Custom Network'
 	},
 	label: {
 		null: 'Null',
@@ -72,6 +73,7 @@ export default {
 		forever: 'Forever',
 		password: 'Password',
 		privateKey: 'Private Key',
+		custom: 'Custom'
 	},
 	state: {
 	},

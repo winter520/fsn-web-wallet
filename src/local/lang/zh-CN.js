@@ -57,6 +57,7 @@ export default {
 		PASTE_PRIVATE_KEY: "私钥",
 		CREATE_NEW_WALLET: "创建新钱包",
 		SAVE_LEYSTORE_FILE: "保存你的 <span>密钥存储库</span> 文件.",
+		custom: '自定义网络'
 	},
 	label: {
 		null: '无',
@@ -74,6 +75,7 @@ export default {
 		forever: '永远',
 		password: '密码',
 		privateKey: '私钥',
+		custom: '自定义'
 	},
 	state: {
 	},

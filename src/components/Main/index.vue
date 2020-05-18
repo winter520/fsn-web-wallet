@@ -20,15 +20,16 @@
         <div class="headerTop_serBox">
           <img src="@/assets/img/wifi.png" class="wifi">
           <i class="arrow"></i>
-          <el-select v-model="network" @change="changNetwork" class="select">
+          <el-select v-model="network.id" @change="changNetwork" class="select">
             <el-option
-              v-for="item in networkOPtion"
-              :key="item.url"
+              v-for="(item, index) in networkOPtion"
+              :key="index"
               :label="item.name"
-              :value="item.url"
+              :value="index"
               no-data-text="Custom"
             >
             </el-option>
+            <!-- <el-option value="3">{{$t('label').custom}}</el-option> -->
           </el-select>
         </div>
       </div>
@@ -39,6 +40,16 @@
 
       </footer>
     </section>
+
+    <el-dialog :title="$t('title').custom" :visible.sync="eDialog.custom" width="300" :before-close="modalClick" :close-on-click-modal="false" :modal-append-to-body='false'>
+      <div>
+        <el-input v-model="network.url"></el-input>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="info" size="small" @click="cancelCustomNet">{{$t('btn').cancel}}</el-button>
+        <el-button type="primary" size="small" @click="setNetWork">{{$t('btn').confirm}}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -89,10 +100,17 @@ export default {
       networkOPtion: [
         {name: 'Mainnet', url: 'https://fsn.dev/api'},
         {name: 'Testnet', url: 'https://testnet.fsn.dev/api'},
+        {name: 'Custom', url: ''},
       ],
       newsActive: '',
-      network: this.$$.serverURL,
+      network: {
+        id: localStorage.getItem('networkID') ? Number(localStorage.getItem('networkID')) : 0,
+        url: localStorage.getItem('network') ? localStorage.getItem('network') : this.$$.serverURL,
+      },
       isReload: true,
+      eDialog: {
+        custom: false
+      }
     }
   },
   components: {language},
@@ -100,16 +118,47 @@ export default {
     '$route' (cur) {
       this.newsView(cur)
     },
+    networkUrl (nodeUrl) {
+      let chainID = this.$$.web3.utils.toHex('32659')
+      if ( nodeUrl === 'https://testnet.fsn.dev/api') {
+        chainID = this.$$.web3.utils.toHex('46688')
+      }
+      this.$store.commit("setChainID", chainID)
+    }
+  },
+  computed: {
+    networkUrl () {
+      return this.$store.state.network
+    }
   },
   mounted () {
-    this.changNetwork()
+    this.setNetWork()
     this.newsView(this.$route)
   },
   methods: {
+    modalClick () {
+      this.eDialog.custom = false
+    },
+    cancelCustomNet () {
+      this.modalClick()
+      this.network.id = 0
+      this.changNetwork()
+    },
     changNetwork () {
-      this.$$.web3.setProvider(this.network)
-      localStorage.setItem('network', this.network)
+      if (this.network.id === 2) {
+        this.eDialog.custom = true
+      } else {
+        this.network.url = this.networkOPtion[this.network.id].url
+        this.setNetWork()
+      }
+    },
+    setNetWork () {
+      this.$$.web3.setProvider(this.network.url)
+      localStorage.setItem('network', this.network.url)
+      localStorage.setItem('networkID', this.network.id)
+      this.$store.commit("setNetwork", this.network.url)
       this.refresh()
+      this.modalClick()
     },
     newsView (cur) {
       if (cur.path.indexOf('register') !== -1) {

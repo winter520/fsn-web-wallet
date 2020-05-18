@@ -146,7 +146,7 @@ export default {
         init: true
       },
       assetId: '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-      chainId: this.$$.web3.utils.toHex('46688'),
+      // chainId: this.$$.web3.utils.toHex('46688'),
       urlParams: '',
       maxFee: 0,
       isToAsset: false,
@@ -176,6 +176,9 @@ export default {
     keystore () {
       return this.$store.state.keystore
     },
+    chainId () {
+      return this.$$.web3.utils.toHex(this.$store.state.chainID)
+    }
   },
   mounted () {
     this.urlParams = this.$route.query
@@ -184,9 +187,6 @@ export default {
     this.sendType = this.urlParams.type
     if (this.sendType === '1') {
       this.selectTimeType = true
-      // this.activeName = 'b'
-      // this.minDate = new Date(Number(this.urlParams.StartTime) * 1000)
-      // this.maxDate = new Date(Number(this.urlParams.EndTime) * 1000)
       this.minDate = Number(this.urlParams.StartTime) * 1000
       this.maxDate = Number(this.urlParams.EndTime) * 1000
       this.formData.endTime = this.$$.timeChange({
@@ -223,12 +223,12 @@ export default {
         }
       }
     }
-    let nodeUrl = localStorage.getItem('network')
-    if ( nodeUrl === 'https://testnet.fsn.dev/api') {
-      this.chainId = this.$$.web3.utils.toHex('46688')
-    } else {
-      this.chainId = this.$$.web3.utils.toHex('32659')
-    }
+    // let nodeUrl = localStorage.getItem('network')
+    // if ( nodeUrl === 'https://testnet.fsn.dev/api') {
+    //   this.chainId = this.$$.web3.utils.toHex('46688')
+    // } else {
+    //   this.chainId = this.$$.web3.utils.toHex('32659')
+    // }
     this.loading.init = false
   },
   methods: {
