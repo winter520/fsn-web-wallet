@@ -241,7 +241,7 @@ export default {
         }
       }
     }
-    console.log(this.formData.timeArr)
+    // console.log(this.formData.timeArr)
     // console.log(this.activeName)
     this.loading.init = false
   },
@@ -353,7 +353,11 @@ export default {
       } else {
         if (this.selectTimeType) {
           startTime = new Date(this.formData.startTime).getTime()
-          endTime = new Date(this.formData.endTime).getTime()
+          if (this.formData.startTime === this.formData.endTime) {
+            endTime = new Date(this.formData.endTime + ' 23:59:59').getTime()
+          } else {
+            endTime = new Date(this.formData.endTime).getTime()
+          }
         } else {
           startTime = this.$$.timeChange({date: Date.now(), type: 'yyyy-mm-dd', format: '-'})
           startTime = new Date(startTime).getTime()
@@ -375,7 +379,12 @@ export default {
         // endTime = ''
       } else {
         startTime = new Date(this.formData.startTime).getTime()
-        endTime = new Date(this.formData.endTime).getTime()
+        if (this.formData.startTime === this.formData.endTime) {
+          endTime = new Date(this.formData.endTime + ' 23:59:59').getTime()
+        } else {
+          endTime = new Date(this.formData.endTime).getTime()
+        }
+        // endTime = new Date(this.formData.endTime).getTime()
         endTime = parseInt(endTime / 1000)
         endTime = Number(this.urlParams.EndTime) <= endTime ? Number(this.urlParams.EndTime) : endTime
         endTime = this.$$.web3.utils.toHex(endTime)
