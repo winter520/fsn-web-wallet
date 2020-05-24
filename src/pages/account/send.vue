@@ -30,9 +30,19 @@
                     </el-switch>
                   </div>
                 </div>
-                <div class="WW100 flex-bc H40 mb-20 mt-20" v-if="selectTimeType">
-                  <el-date-picker v-model="formData.startTime" type="date" :placeholder="$t('label').startTime" class="WW45" :picker-options="pickerOptionsStart" @change="changeTime"> </el-date-picker>
-                  <el-date-picker v-model="formData.endTime" type="date" :placeholder="$t('label').endTime" class="WW45" :picker-options="pickerOptionsEnd"> </el-date-picker>
+                <div class="WW100 flex-bc H40 mb-20 mt-20" v-if="selectTimeType && activeName === 'b'">
+                  <el-date-picker
+                    class="WW100"
+                    v-model="formData.timeArr"
+                    type="daterange"
+                    range-separator="-"
+                    start-placeholder=""
+                    end-placeholder=""
+                    value-format="yyyy-MM-dd"
+                    format="yyyy-MM-dd"
+                    unlink-panels
+                    :picker-options="pickerOptions">
+                  </el-date-picker>
                 </div>
                 <div class="WW100 flex-bc H40 mt-20 mb-20" v-else>
                   <el-select type="text" v-model="formData.month" @change="confirmMonth" :placeholder="$t('label').selectTime" class="HH100 WW100" readonly>
@@ -43,9 +53,17 @@
                 </div>
               </el-tab-pane>
               <el-tab-pane :label="$t('label').forever" name="c" v-if="sendType === '0' || urlParams.EndTime.toString().length > 13">
-                <div class="flex-bc H40 mt-20 WW100 mb-20">
-                  <!-- <el-input type="text" v-model="formData.beginTime" @click="prop.beginTime = true; formTimeKey = 'beginTime'" :placeholder="$t('label').startTime" class="" readonly></el-input> -->
-                  <el-date-picker v-model="formData.beginTime" type="date" placeholder="选择日期" class="WW45"> </el-date-picker>
+                <div class="flex-bc H40 mt-20 WW100 mb-20" v-if="refresh.beginTime">
+                  <el-date-picker
+                    v-model="formData.beginTime"
+                    type="date"
+                    placeholder=""
+                    unlink-panels
+                    value-format="yyyy-MM-dd"
+                    format="yyyy-MM-dd"
+                    :picker-options="pickerOptions"
+                    @input="changeBeginTime"
+                    class="WW45"> </el-date-picker>
                   <el-input type="text" :value="$t('label').forever" class="WW45 center" readonly></el-input>
                 </div>
               </el-tab-pane>
@@ -130,6 +148,7 @@ export default {
       selectTimeType: false,
       formData: {
         month: 3,
+        timeArr: ['', '']
         // to: '0x014DC8Fd1221AA87C800A2fF8dB60130b333D410',
         // value: 0.00001
       },
@@ -150,24 +169,16 @@ export default {
       urlParams: '',
       maxFee: 0,
       isToAsset: false,
-      pickerOptionsStart: {
+      pickerOptions: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 8.64e7
         }
       },
-      pickerOptionsEnd: {
-        disabledDate(time) {
-          return time.getTime() < Date.now() - 8.64e7
-        }
-      },
-      signTx: ''
+      signTx: '',
+      refresh: {
+        beginTime: true,
+      }
     }
-  },
-  watch: {
-    // 'formData.startTime' () {
-    //   console.log(123)
-    //   this.formData.endTime = ''
-    // }
   },
   computed: {
     address () {
@@ -177,7 +188,7 @@ export default {
       return this.$store.state.keystore
     },
     chainId () {
-      return this.$$.web3.utils.toHex(this.$store.state.chainID)
+      return this.$store.state.chainID
     }
   },
   mounted () {
@@ -186,8 +197,11 @@ export default {
     this.balance = this.$$.web3.utils.fromWei(this.urlParams.balance, 'ether')
     this.sendType = this.urlParams.type
     if (this.sendType === '1') {
+      let startTime = this.urlParams.StartTime.toString().length < 13 ? Number(this.urlParams.StartTime) * 1000 : Number(this.urlParams.StartTime)
+      startTime = startTime > Date.now() ? startTime : Date.now()
       this.selectTimeType = true
-      this.minDate = Number(this.urlParams.StartTime) * 1000
+      this.minDate = startTime
+      this.activeName = 'b'
       this.maxDate = Number(this.urlParams.EndTime) * 1000
       this.formData.endTime = this.$$.timeChange({
         date: this.urlParams.EndTime,
@@ -195,34 +209,40 @@ export default {
         format: '-'
       })
       this.formData.beginTime = this.formData.startTime = this.$$.timeChange({
-        date: this.urlParams.StartTime,
+        date: startTime,
         type: 'yyyy-mm-dd',
         format: '-'
       })
+      // console.log(this.formData.startTime)
       if (this.urlParams.EndTime.toString().length > 13) {
         this.formData.endTime = ''
-        this.maxDate = new Date('3333-12-30')
+        this.maxDate = ''
+        this.activeName = 'a'
         if (Number(this.urlParams.StartTime) * 1000 < Date.now()) {
           this.isToAsset = true
           this.formData.to = this.address
-        } else  {
+        } else {
           this.activeName = 'b'
         }
       }
+      this.formData.timeArr = [this.formData.startTime, this.formData.endTime ? this.formData.endTime : this.formData.startTime]
       let minTime = this.minDate, maxTime = this.maxDate
-      this.pickerOptionsStart = {
-        disabledDate(time) {
-          let t = time.getTime()
-          return (t < minTime || t > maxTime)
-        }
-      }
-      this.pickerOptionsEnd = {
-        disabledDate(time) {
-          let t = time.getTime()
-          return (t < minTime || t > maxTime)
+      this.pickerOptions = {
+        disabledDate (time) {
+          let t = time.getTime() + 8.64e7, flag = true
+          if (maxTime !== '') {
+            flag = t < minTime || t > maxTime
+          } else {
+            flag = t <= minTime
+          }
+          // console.log(t)
+          return flag
+          // return (t < minTime || t > maxTime)
         }
       }
     }
+    console.log(this.formData.timeArr)
+    // console.log(this.activeName)
     this.loading.init = false
   },
   methods: {
@@ -254,23 +274,20 @@ export default {
         this.formData.month = ''
       } else {
         this.formData.startTime = this.formData.endTime = ''
+        this.formData.timeArr = ['', '']
       }
     },
-    changeTime (val) {
-      let minTime = '', maxTime = ''
-      if (val) {
-        minTime = this.formData.startTime, maxTime = this.maxDate
-      } else {
-        minTime = Date.now(), maxTime = new Date('3333-12-30').getTime()
-      }
-      this.pickerOptionsEnd = {
-        disabledDate(time) {
-          let t = time.getTime()
-          return (t < minTime || t > maxTime)
-        }
-      }
+    changeBeginTime (val) {
+      console.log(val)
+      this.refresh.beginTime = false
+      this.$nextTick(() => {
+        this.refresh.beginTime = true
+      })
+      // this.formData.endTime = val
     },
     openPwd () {
+      this.formData.startTime = this.formData.timeArr[0]
+      this.formData.endTime = this.formData.timeArr[1]
       if (!this.$$.web3.utils.isAddress(this.formData.to)) {
         this.msgWarning(this.$t('warn').w_1)
         return
@@ -286,7 +303,6 @@ export default {
       if (this.activeName === 'b') {
         if (this.selectTimeType) {
           if (!this.formData.startTime || !this.formData.endTime) {
-          // if (!this.formData.startTime) {
             this.msgWarning(this.$t('warn').w_4)
             return
           }
@@ -333,6 +349,7 @@ export default {
       if (type && type === 'Forever') {
         startTime = new Date(this.formData.beginTime).getTime()
         endTime = this.$$.web3.utils.toHex('18446744073709551615')
+        // endTime = ''
       } else {
         if (this.selectTimeType) {
           startTime = new Date(this.formData.startTime).getTime()
@@ -355,6 +372,7 @@ export default {
       if (type && type === 'Forever') {
         startTime = new Date(this.formData.beginTime).getTime()
         endTime = this.$$.web3.utils.toHex('18446744073709551615')
+        // endTime = ''
       } else {
         startTime = new Date(this.formData.startTime).getTime()
         endTime = new Date(this.formData.endTime).getTime()
@@ -374,6 +392,7 @@ export default {
       startTime = parseInt(startTime / 1000)
       startTime = this.$$.web3.utils.toHex(startTime)
       endTime = this.$$.web3.utils.toHex('18446744073709551615')
+      // endTime = ''
       this.buildTxnsAndSign('buildTimeLockToAssetTx', startTime, endTime)
     },
     buildTxnsAndSign (param, startTime, endTime) {
@@ -387,9 +406,10 @@ export default {
       if (startTime) {
         rawTx.start = startTime
       }
-      if (endTime) {
+      if (endTime || endTime === '') {
         rawTx.end = endTime
       }
+      console.log(rawTx)
       // console.log(rawTx)
       this.$$.web3.fsntx[param]({
         ...rawTx
@@ -405,6 +425,7 @@ export default {
         this.prop.pwd = true
       }).catch(err => {
         this.msgError(err.toString())
+        this.loading.init = false
       })
     },
     getSignData (data) {
@@ -426,6 +447,7 @@ export default {
           this.msgSuccess(this.$t('success').s_4 + 'Hash:' + hash)
         }
         this.prop.confirm = false
+        this.toUrl('/account')
       })
     }
   }

@@ -36,11 +36,14 @@ export default {
 		del: 'Delete',
 		ledger: 'Connect to Ledger',
 		trezor: 'Connect to TREZOR',
+		SELECT_WALLET_FILE: "Select Wallet File...",
 		GenerateSAN: 'Generate SAN',
 		NEXT_STEP: "Next step",
 		DOWNLOAD_KEYSTORE: "Download Keystore File (UTC / JSON)",
 		DOWNLOAD_KEYSTORE1: "Keystore File (UTC / JSON · Recommended · Encrypted)",
 		UNDERSTAND_CONTINUE: "I understand. Continue.",
+		viewQRcode: 'Address QR code',
+		exit: 'Close Wallet'
 	},
 	loading: {
 		l_1: 'Loading……'

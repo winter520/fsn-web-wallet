@@ -4,13 +4,13 @@
       <li class="item" v-if="walletType === 'ledger'">
         <label class="label">Ledger Wallet:</label>
         <div class="input-box">
-          <el-button @click="ledgerToSign" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').ledger}}</el-button>
+          <el-button @click="unlock" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').ledger}}</el-button>
         </div>
       </li>
       <li class="item" v-if="walletType === 'trezor'">
         <label class="label">TREZOR:</label>
         <div class="input-box">
-          <el-button @click="trezorToSign" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').trezor}}</el-button>
+          <el-button @click="unlock" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').trezor}}</el-button>
         </div>
       </li>
       <li class="item mb-20" v-if="walletType === 'keystore'">
@@ -26,7 +26,7 @@
         </div>
       </li>
       <li class="item" v-if="walletType === 'keystore' || walletType === 'privateKey'">
-        <el-button type="primary" @click="ksAndPrivFn" class="WW100 btn-yellow" :disabled="password.length <= 0 && privateKey.length <= 0" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').unlock}}</el-button>
+        <el-button type="primary" @click="unlock" class="WW100 btn-yellow" :disabled="password.length <= 0 && privateKey.length <= 0" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').unlock}}</el-button>
       </li>
     </ul>
   </div>
@@ -78,20 +78,7 @@ export default {
     unlock () {
       this.loading.btn = true
       this.btnTxt = this.$t('btn').unlock + '...'
-      if (walletType === 'ledger') {
-        this.ledgerToSign()
-      } else if (walletType === 'trezor') {
-        this.trezorToSign()
-      } else {
-        this.ksAndPrivFn()
-      }
-    },
-    ledgerToSign () {
-      ledger(this.HDPath, this.txnsData).then(res => {
-        this.getSign(res)
-      })
-    },
-    trezorToSign () {
+      
       let rawTx = {
         nonce: this.txnsData.nonce,
         gasPrice: this.txnsData.gasPrice,
@@ -100,8 +87,27 @@ export default {
         to: this.txnsData.to,
         value: this.txnsData.value,
         data: this.txnsData.input,
-        chainId: this.$$.web3.utils.hexToNumber(this.txnsData.chainId),
+        chainId: this.txnsData.chainId
       }
+      console.log(this.txnsData)
+      console.log(rawTx)
+      if (this.walletType === 'ledger') {
+        this.ledgerToSign(rawTx)
+      } else if (this.walletType === 'trezor') {
+        this.trezorToSign(rawTx)
+      } else {
+        this.ksAndPrivFn(rawTx)
+      }
+    },
+    ledgerToSign (rawTx) {
+      // console.log(rawTx)
+      // console.log(this.$$.web3.utils.hexToNumber(rawTx.chainId))
+      ledger(this.HDPath, rawTx).then(res => {
+        this.getSign(res)
+      })
+    },
+    trezorToSign (rawTx) {
+      rawTx.chainId = this.$$.web3.utils.hexToNumber(rawTx.chainId)
       trezor(this.HDPath, rawTx).then(res => {
         this.getSign(res)
       })
@@ -114,9 +120,10 @@ export default {
       } else {
         this.signData.error = res.error
       }
+      this.loading.btn = false
       this.backSign()
     },
-    ksAndPrivFn () {
+    ksAndPrivFn (rawTx) {
       if (!this.keystore && !this.privateKey) {
         this.$notify(this.$t('warn').w_7)
         return
@@ -134,7 +141,7 @@ export default {
         if (this.address.toString() !== wallet.getChecksumAddressString().toString()) {
           this.signData.error = this.$t('error').e_2
         } else {
-          let tx = new Tx(this.txnsData)
+          let tx = new Tx(rawTx)
           tx.sign(prvtKey)
           let signTx = tx.serialize().toString("hex")
           signTx = signTx.indexOf("0x") === 0 ? signTx : ("0x" + signTx)

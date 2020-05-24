@@ -16,6 +16,7 @@
         </ul>
       </div>
       <div class="flex-ec">
+        <i class="el-icon-refresh-right mr-10 cursorP" @click="refresh"></i>
         <language @changeLang="refresh"></language>
         <div class="headerTop_serBox">
           <img src="@/assets/img/wifi.png" class="wifi">

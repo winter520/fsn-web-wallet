@@ -15,7 +15,11 @@
           <h6 class="h6">SHORT ADDRESS</h6>
           <p class="p">{{addrNode ? addrNode : $t('tip').addNode}}</p>
           <p class="p mt-10" v-if="!addrNode">FEE 0.1 FSN</p>
-          <el-button type="primary" class="mt-10" size="mini" v-if="!addrNode" @click="createAddrNode">{{$t('btn').GenerateSAN}}</el-button>
+        </li>
+        <li class="item flex-sc flex-wrap">
+          <el-button type="primary" class="mt-10 mr-5" size="mini" v-if="!addrNode" @click="createAddrNode">{{$t('btn').GenerateSAN}}</el-button>
+          <el-button type="primary" class="mt-10 mr-5 ml-0" size="mini" @click="openQRcode">{{$t('btn').viewQRcode}}</el-button>
+          <el-button class="mt-10 mr-5 ml-0" size="mini" @click="exitWallet">{{$t('btn').exit}}</el-button>
         </li>
       </ul>
     </div>
@@ -68,14 +72,14 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column label="From" align="center">
+              <el-table-column label="Start" align="center">
                 <template slot-scope="scope">
                   {{
                     scope.row.StartTime.toString().length > 13 ? 'Forever' : $$.timeChange({date: scope.row.StartTime, type: 'yyyy-mm-dd', format: '-'})
                   }}
                 </template>
               </el-table-column>
-              <el-table-column label="From" align="center">
+              <el-table-column label="End" align="center">
                 <template slot-scope="scope">
                   {{
                     scope.row.EndTime.toString().length > 13 ? 'Forever' : $$.timeChange({date: scope.row.EndTime, type: 'yyyy-mm-dd', format: '-'})
@@ -89,7 +93,8 @@
               </el-table-column>
               <el-table-column :label="$t('label').action" align="right">
                 <template slot-scope="scope">
-                  <el-button type="primary" size="mini" @click="toUrl('/send', {id: scope.row.id, balance: scope.row.Value, StartTime: scope.row.StartTime, EndTime: scope.row.EndTime, type: '1'})">{{$t('btn').send}}</el-button>
+                  <!-- {{scope.row}} -->
+                  <el-button type="primary" size="mini" @click="toUrl('/send', {id: items.id, balance: scope.row.Value, StartTime: scope.row.StartTime, EndTime: scope.row.EndTime, type: '1'})">{{$t('btn').send}}</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -99,10 +104,18 @@
     </div>
 
     <!-- 签名 start -->
-    <el-dialog :title="$t('btn').unlock" :visible.sync="prop.pwd" width="300" :before-close="cancel" :close-on-click-modal="false" :modal-append-to-body='false'>
+    <el-dialog :title="$t('btn').unlock" :visible.sync="prop.pwd" :before-close="cancel" :close-on-click-modal="false" :modal-append-to-body='false'>
       <unlock v-if="prop.pwd" :txnsData='dataPage' @setPrviKey="getSignData"></unlock>
     </el-dialog>
     <!-- 签名 end -->
+
+    <el-dialog :title="$t('btn').unlock" :visible.sync="prop.qrCode" width="300px" :before-close="cancel" :close-on-click-modal="true" :modal-append-to-body='false'>
+      <div class="flex-c">
+        <div id="addressQRcode"></div>
+      </div>
+      <h6 class="font14 mt-20 color_gray">PUBLIC ADDRESS：</h6>
+      <p class="cursorP" @click="copyTxt($store.state.address)">{{$store.state.address}}<span class="font12 ml-10" style="color:#0099ff;">(Click copy)</span></p>
+    </el-dialog>
   </div>
 </template>
 
@@ -164,9 +177,18 @@ export default {
       },
       dataPage: {},
       prop: {
-        pwd: false
+        pwd: false,
+        qrCode: false
       },
       fsnId: '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+    }
+  },
+  computed: {
+    address () {
+      return this.$store.state.address
+    },
+    chainId () {
+      return this.$store.state.chainID
     }
   },
   mounted () {
@@ -175,10 +197,23 @@ export default {
   methods: {
     cancel () {
       this.prop.pwd = false
+      this.prop.qrCode = false
+    },
+    exitWallet () {
+      this.$store.commit("setAddress", '')
+      this.$store.commit("setKeystore", '')
+      this.toUrl('/')
+      // history.go(0)
     },
     init () {
       this.getHeader()
       this.initData()
+    },
+    openQRcode () {
+      this.prop.qrCode = true
+      this.$nextTick(() => {
+        this.$$.qrCode(this.$store.state.address, 'addressQRcode')
+      })
     },
     createAddrNode () {
       this.$$.web3.fsntx.buildGenNotationTx({
@@ -187,9 +222,9 @@ export default {
         console.log(res)
         res.chainId = this.chainId
         res.from = this.address
-        console.log(res)
+        // console.log(res)
         this.dataPage = res
-        this.dataPage.gasLimit = res.gas
+        // this.dataPage.gasLimit = res.gas
         this.prop.pwd = true
       })
     },
