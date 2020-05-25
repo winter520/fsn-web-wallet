@@ -26,7 +26,83 @@
 
     <div class="account-data-box">
       <div class="account-data-bg">
-        <div class="account-table">
+        <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+          <el-tab-pane label="Assets" name="assets">
+            <el-table :data="balanceData" style="width: 100%" :max-height="800" empty-text="Null">
+              <el-table-column :label="$t('label').coin" align="left">
+                <template slot-scope="scope">
+                  <div class="flex-sc">
+                    <div class="coin-logo">
+                      <img :src="getCoinInfo(formatAddr(scope.row.id)).logo" v-if="getCoinInfo(formatAddr(scope.row.id))">
+                      <i class="null flex-c" v-else>0x</i>
+                    </div>
+                    <span :title="scope.row.id">{{formatAddr(scope.row.id).length > 10 ? $$.cutOut(scope.row.id, 4, 2) : formatAddr(scope.row.id)}}</span>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="ID" align="center">
+                <template slot-scope="scope">
+                  {{$$.cutOut(scope.row.id, 8, 6)}}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('label').balance" align="center">
+                <template slot-scope="scope">
+                  {{$$.thousandBit($$.web3.utils.fromWei(scope.row.balance.toString(), 'ether'), 'no')}}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('label').action" align="right">
+                <template slot-scope="scope">
+                  <el-button type="primary" size="mini" @click="toUrl('/send', {id: scope.row.id, balance: scope.row.balance, type: '0'})">{{$t('btn').send}}</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="Time-Locked Assets" name="timelock">
+            <div v-for="(items, indexs) in timelockData" :key="indexs" class="mb-30">
+              <el-table :data="items.list" style="width: 100%" :max-height="800" size="mini" empty-text="Null">
+                <el-table-column :label="$t('label').coin" align="left">
+                  <template>
+                    <div class="flex-sc">
+                      <div class="coin-logo">
+                        <img :src="getCoinInfo(formatAddr(items.id)).logo" v-if="getCoinInfo(formatAddr(items.id))">
+                        <i class="null flex-c" v-else>0x</i>
+                      </div>
+                      <span :title="items.id">{{formatAddr(items.id).length > 10 ? $$.cutOut(items.id, 4, 2) : formatAddr(items.id)}}</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Start" align="center">
+                  <template slot-scope="scope">
+                    {{
+                      scope.row.StartTime.toString().length > 13 ? 'Forever' : $$.timeChange({date: scope.row.StartTime, type: 'yyyy-mm-dd', format: '-'})
+                    }}
+                  </template>
+                </el-table-column>
+                <el-table-column label="End" align="center">
+                  <template slot-scope="scope">
+                    {{
+                      scope.row.EndTime.toString().length > 13 ? 'Forever' : $$.timeChange({date: scope.row.EndTime, type: 'yyyy-mm-dd', format: '-'})
+                    }}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('label').balance" align="center">
+                  <template slot-scope="scope">
+                    {{$$.thousandBit($$.web3.utils.fromWei(scope.row.Value.toString(), 'ether'), 'no')}}
+                  </template>
+                </el-table-column>
+                <el-table-column :label="$t('label').action" align="right">
+                  <template slot-scope="scope">
+                    <!-- {{scope.row}} -->
+                    <el-button type="primary" size="mini" @click="toUrl('/send', {id: items.id, balance: scope.row.Value, StartTime: scope.row.StartTime, EndTime: scope.row.EndTime, type: '1'})">{{$t('btn').send}}</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="Cross Chain" name="ceosschain">Cross Chain</el-tab-pane>
+          <!-- <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane> -->
+        </el-tabs>
+        <!-- <div class="account-table">
           <h3 class="title">Assets</h3>
           <el-table :data="balanceData" style="width: 100%" :max-height="300" empty-text="Null">
             <el-table-column :label="$t('label').coin" align="left">
@@ -93,13 +169,12 @@
               </el-table-column>
               <el-table-column :label="$t('label').action" align="right">
                 <template slot-scope="scope">
-                  <!-- {{scope.row}} -->
                   <el-button type="primary" size="mini" @click="toUrl('/send', {id: items.id, balance: scope.row.Value, StartTime: scope.row.StartTime, EndTime: scope.row.EndTime, type: '1'})">{{$t('btn').send}}</el-button>
                 </template>
               </el-table-column>
             </el-table>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -163,10 +238,12 @@
 
 <script>
 import coinInfo from '@/config/coininfo.js'
+import swapWeb3 from '@/assets/js/web3/swap.js'
 export default {
   name: 'account',
   data () {
     return {
+      activeName: 'assets',
       headerImg: '',
       fsnBalance: '',
       balanceData: [],
@@ -192,12 +269,26 @@ export default {
     }
   },
   mounted () {
+    this.activeName = this.$route.query.activeTab ? this.$route.query.activeTab : 'assets'
     this.init()
+    // console.log(axios.request({url: 'http://47.92.168.85:12556/rpc'}))
+    this.$$.web3.eth.call({
+      // to: this.fsnId
+      to: '0x36793680e55bff3795c0dbad6eb0510a2d06ff42',
+      data: '0x70a08231000000000000000000000000' + 'E000E632124aa65B80f74E3e4cc06DC761610583'
+    }, "latest").then(res => {
+      console.log(res)
+      let num = this.$$.web3.utils.hexToNumber(res)
+      console.log(num)
+    })
   },
   methods: {
     cancel () {
       this.prop.pwd = false
       this.prop.qrCode = false
+    },
+    handleClick () {
+      this.$router.push({path: this.$route.path, query: {activeTab: this.activeName}})
     },
     exitWallet () {
       this.$store.commit("setAddress", '')
@@ -208,6 +299,71 @@ export default {
     init () {
       this.getHeader()
       this.initData()
+      // swapWeb3.setProvider('http://47.92.168.85:12556/rpc')
+      // this.getCrossChain()
+    },
+    getHeader () {
+      this.headerImg = this.$$.createImg(this.$store.state.address)
+    },
+    initData () {
+      if (!this.$store.state.address) return
+      const batch = new this.$$.web3.BatchRequest()
+      batch.add(this.$$.web3.fsn.getAllBalances.request( this.$store.state.address, 'latest', (err, res) => {
+        this.balanceData = []
+        if (err) {
+          console.log(err)
+          this.balanceData = [{ id: this.fsnId, balance: '0' }]
+          this.fsnBalance = 0
+        } else {
+          let fsnObj = { id: this.fsnId, balance: '0' }
+          for (let obj in res) {
+            if (obj === this.fsnId) {
+              fsnObj = { id: obj, balance: res[obj] }
+            } else {
+              this.balanceData.push({ id: obj, balance: res[obj] })
+            }
+          }
+          this.balanceData.unshift(fsnObj)
+          this.fsnBalance = this.$$.web3.utils.fromWei(fsnObj.balance, 'ether')
+        }
+      }))
+      batch.add(this.$$.web3.fsn.getAllTimeLockBalances.request(this.$store.state.address, 'latest', (err, res) => {
+        this.timelockData = []
+        if (err) {
+          console.log(err)
+          this.timelockData = []
+        } else {
+          let fsnObj = { id: this.fsnId, list: [] }
+          for (let obj in res) {
+            if (obj === this.fsnId) {
+              fsnObj = { id: obj, list: res[obj].Items }
+            } else {
+              this.timelockData.push({ id: obj, list: res[obj].Items })
+            }
+          }
+          if (fsnObj.list.length > 0) {
+            this.timelockData.unshift(fsnObj)
+          }
+        }
+      }))
+      batch.add(this.$$.web3.fsn.getNotation.request(this.$store.state.address, 'latest', (err, res) => {
+        if (err) {
+          console.log(err)
+          this.addrNode = ''
+        } else {
+          this.addrNode = res
+        }
+        this.loading.init = false
+      }))
+      batch.execute()
+    },
+    getCrossChain () {
+      swapWeb3.swap.GetServerInfo().then(res => {
+        console.log(res)
+        // this.swapInfo = res.SrcToken
+      }).catch(err => {
+        console.log(err)
+      })
     },
     openQRcode () {
       this.prop.qrCode = true
@@ -242,83 +398,6 @@ export default {
       } else {
         this.msgError(data.error)
       }
-    },
-    getHeader () {
-      this.headerImg = this.$$.createImg(this.$store.state.address)
-    },
-    initData () {
-      if (!this.$store.state.address) return
-      const batch = new this.$$.web3.BatchRequest()
-      batch.add(this.$$.web3.fsn.getAllBalances.request( this.$store.state.address, 'latest', (err, res) => {
-        this.balanceData = []
-        if (err) {
-          console.log(err)
-          this.balanceData = [{
-            id: this.fsnId,
-            balance: '0'
-          }]
-          this.fsnBalance = 0
-        } else {
-          let fsnObj = {
-            id: this.fsnId,
-            balance: '0'
-          }
-          for (let obj in res) {
-            if (obj === this.fsnId) {
-              fsnObj = {
-                id: obj,
-                balance: res[obj]
-              }
-            } else {
-              this.balanceData.push({
-                id: obj,
-                balance: res[obj]
-              })
-            }
-          }
-          this.balanceData.unshift(fsnObj)
-          this.fsnBalance = this.$$.web3.utils.fromWei(fsnObj.balance, 'ether')
-        }
-      }))
-      batch.add(this.$$.web3.fsn.getAllTimeLockBalances.request(this.$store.state.address, 'latest', (err, res) => {
-        this.timelockData = []
-        if (err) {
-          console.log(err)
-          this.timelockData = []
-        } else {
-          let fsnObj = {
-            id: this.fsnId,
-            list: []
-          }
-          for (let obj in res) {
-            if (obj === this.fsnId) {
-              fsnObj = {
-                id: obj,
-                list: res[obj].Items
-              }
-            } else {
-              this.timelockData.push({
-                id: obj,
-                list: res[obj].Items
-              })
-            }
-          }
-          if (fsnObj.list.length > 0) {
-            this.timelockData.unshift(fsnObj)
-          }
-        }
-      }))
-      batch.add(this.$$.web3.fsn.getNotation.request(this.$store.state.address, 'latest', (err, res) => {
-        if (err) {
-          console.log(err)
-          this.addrNode = ''
-        } else {
-          this.addrNode = res
-        }
-        this.loading.init = false
-      }))
-
-      batch.execute()
     },
     formatAddr (addr) {
       let name = ''

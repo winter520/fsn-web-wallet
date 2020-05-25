@@ -44,7 +44,14 @@
 
     <el-dialog :title="$t('title').custom" :visible.sync="eDialog.custom" width="300" :before-close="modalClick" :close-on-click-modal="false" :modal-append-to-body='false'>
       <div>
-        <el-input v-model="network.url"></el-input>
+        <el-form>
+          <el-form-item label="URL">
+            <el-input v-model="network.url"></el-input>
+          </el-form-item>
+          <el-form-item label="ChainID">
+            <el-input v-model="network.chainID"></el-input>
+          </el-form-item>
+        </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="info" size="small" @click="cancelCustomNet">{{$t('btn').cancel}}</el-button>
@@ -107,6 +114,7 @@ export default {
       network: {
         id: localStorage.getItem('networkID') ? Number(localStorage.getItem('networkID')) : 0,
         url: localStorage.getItem('network') ? localStorage.getItem('network') : this.$$.serverURL,
+        chainID: localStorage.getItem('chainID') ? localStorage.getItem('chainID') : '32659',
       },
       isReload: true,
       eDialog: {
@@ -119,13 +127,13 @@ export default {
     '$route' (cur) {
       this.newsView(cur)
     },
-    networkUrl (nodeUrl) {
-      let chainID = this.$$.web3.utils.toHex('32659')
-      if ( nodeUrl === 'https://testnet.fsn.dev/api') {
-        chainID = this.$$.web3.utils.toHex('46688')
-      }
-      this.$store.commit("setChainID", chainID)
-    }
+    // networkUrl (nodeUrl) {
+    //   let chainID = this.$$.web3.utils.toHex('32659')
+    //   if ( nodeUrl === 'https://testnet.fsn.dev/api') {
+    //     chainID = this.$$.web3.utils.toHex('46688')
+    //   }
+    //   this.$store.commit("setChainID", chainID)
+    // }
   },
   computed: {
     networkUrl () {
@@ -150,6 +158,11 @@ export default {
         this.eDialog.custom = true
       } else {
         this.network.url = this.networkOPtion[this.network.id].url
+        let chainID = '32659'
+        if ( this.network.url === 'https://testnet.fsn.dev/api') {
+          chainID = '46688'
+        }
+        this.network.chainID = chainID
         this.setNetWork()
       }
     },
@@ -157,7 +170,9 @@ export default {
       this.$$.web3.setProvider(this.network.url)
       localStorage.setItem('network', this.network.url)
       localStorage.setItem('networkID', this.network.id)
+      localStorage.setItem('chainID', this.network.chainID)
       this.$store.commit("setNetwork", this.network.url)
+      this.$store.commit("setChainID", this.$$.web3.utils.toHex(this.network.chainID))
       this.refresh()
       this.modalClick()
     },

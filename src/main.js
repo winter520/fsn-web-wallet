@@ -73,8 +73,10 @@ Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$message = Message
 
 Vue.use(Vuex)
-Vue.config.productionTip = false
-Vue.prototype.$http = axios
+Vue.config.productionTip = 
+// axios.defaults.headers.common["token"] = "*"
+axios.defaults.headers.post["Content-type"] = "application/json"
+Vue.prototype.$axios = axios
 Vue.prototype.$$ = $$
 
 Vue.prototype.toUrl = function(url, params) {
