@@ -17,19 +17,21 @@ TrezorConnect.manifest({
   appUrl: 'https://localhost:8080',
 })
 
-let getAddrRes = ''
+let getAddrRes = '', oldHDPath = ''
 function getAddressArr (HDPath, page) {
   return new Promise(resolve => {
     let data = { msg: 'Error', info: []}
-    // console.log(page)
     // console.log(getAddrRes)
-    if (page) {
+    // console.log(HDPath)
+    // console.log(oldHDPath)
+    if (HDPath === oldHDPath) {
       let addressArr = []
       addressArr = walletCreate(getAddrRes.payload.publicKey, getAddrRes.payload.chainCode, 'trezor', HDPath, page)
       data.msg = 'Success'
       data.info = addressArr
       resolve(data)
     } else {
+      oldHDPath = HDPath
       TrezorConnect.getPublicKey({ path: HDPath }).then(res => {
       // TrezorConnect.nemGetAddress({ path: HDPath }).then(res => {
         console.log(res)

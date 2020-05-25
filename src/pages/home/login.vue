@@ -8,7 +8,7 @@
           </hgroup>
           <div class="selectType_contentBox">
             <div class="createInfo_btn flex-c" v-if="!isShowTip">
-              <el-button class="W240 mt-10" @click="eDialog.path = true" type="primary">{{$t('btn').ledger}}</el-button>
+              <el-button class="W240 mt-10" @click="openHDwallet(HDPath)" type="primary">{{$t('btn').ledger}}</el-button>
             </div>
           </div>
           <div class="selectType_contTip" v-if="isShowTip">
@@ -21,7 +21,7 @@
           </hgroup>
           <div class="selectType_contentBox">
             <div class="createInfo_btn flex-c">
-              <el-button class="W240 mt-10" @click="eDialog.path = true" type="primary">{{$t('btn').trezor}}</el-button>
+              <el-button class="W240 mt-10" @click="openHDwallet(HDPath)" type="primary">{{$t('btn').trezor}}</el-button>
             </div>
           </div>
         </el-tab-pane>
@@ -60,18 +60,16 @@
       </el-tabs>
     </div>
 
-    <el-dialog :title="$t('tip').selectPath" :visible.sync="eDialog.path" width="300" :before-close="modalClick" :close-on-click-modal="false" :modal-append-to-body='false'>
-      <div>
-        <p>{{$t('tip').selectAddr}}</p>
-        <el-input v-model="HDPath"></el-input>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="info" size="small" @click="modalClick">{{$t('btn').cancel}}</el-button>
-        <el-button type="primary" size="small" @click="openHDwallet">{{$t('btn').confirm}}</el-button>
-      </span>
-    </el-dialog>
-
     <el-dialog :title="$t('tip').selectAddr" :visible.sync="eDialog.addr" width="300" :before-close="modalClick" :close-on-click-modal="false" :modal-append-to-body='false'>
+      <div class="flex-sc mb-20">
+        <span class="mr-10">Address</span>
+        <el-select v-model="HDPath" :class="HDPath === 'Custom' ? 'WW30' : 'WW80'" @change="changeHDPath">
+          <el-option v-for="(item, index) in HDPathArr" :key="index" :value="item.path" :label="item.name"></el-option>
+          <el-option value='Custom'>Custom</el-option>
+        </el-select>
+        <el-input v-model="HDPathCustom" v-if="HDPath === 'Custom'" :placeholder="HDPathCustom ? HDPathCustom : HDPath" class="WW30"></el-input>
+        <el-button v-if="HDPath === 'Custom'">123</el-button>
+      </div>
       <div class="selectAddr_type">
         <el-radio-group v-model="selectAddr">
           <el-radio :label="item.addr" v-for="(item, index) in addrList" :key="index" class="WW100 mb-20">{{item.addr}}</el-radio>
@@ -130,6 +128,7 @@
 import wallet from '@/assets/js/wallets/ethereum/wallet'
 import {getAddressArr as ledger} from '@/assets/js/wallets/ledger/index.js'
 import {getAddressArr as trezor} from '@/assets/js/wallets/trezor/index.js'
+import HDPathArr from '@/config/HDPath.js'
 export default {
   name: 'login',
   data () {
@@ -140,7 +139,6 @@ export default {
       },
       eDialog: {
         addr: false,
-        path: false
       },
       addrList: [],
       password: '',
@@ -151,32 +149,34 @@ export default {
       page: 0,
       isShowTip: true,
       showPwdBtn: false,
-      HDPath: "m/44'/32659'/0'/0"
+      HDPathArr: HDPathArr,
+      HDPath: "m/44'/60'/0'/0",
+      HDPathCustom: ''
     }
   },
-  watch: {
-    networkUrl (nodeUrl) {
-      if ( nodeUrl === 'https://testnet.fsn.dev/api') {
-        this.HDPath = "m/44'/46688'/0'/0"
-      }
-      this.HDPath = localStorage.getItem('HDPath') ? localStorage.getItem('HDPath') : this.HDPath
-    }
-  },
-  computed: {
-    networkUrl () {
-      return this.$store.state.network
-    }
-  },
+  // watch: {
+  //   networkUrl (nodeUrl) {
+  //     if ( nodeUrl === 'https://testnet.fsn.dev/api') {
+  //       this.HDPath = "m/44'/46688'/0'/0"
+  //     }
+  //     this.HDPath = localStorage.getItem('HDPath') ? localStorage.getItem('HDPath') : this.HDPath
+  //   }
+  // },
+  // computed: {
+  //   networkUrl () {
+  //     return this.$store.state.network
+  //   }
+  // },
   mounted () {
     this.HDPath = localStorage.getItem('HDPath') ? localStorage.getItem('HDPath') : this.HDPath
     if (location.protocol === 'https:' && navigator.userAgent.indexOf('Chrome') !== -1) {
       this.isShowTip = false
     }
+    // console.log(HDPathArr)
   },
   methods: {
     modalClick () {
       this.eDialog.addr = false
-      this.eDialog.path = false
       this.page = 0
       this.addrList = []
       this.password = ''
@@ -188,24 +188,31 @@ export default {
       document.getElementById("fileName").innerHTML = this.$t('btn').SELECT_WALLET_FILE
       document.getElementById("fileUpload").value = ''
     },
-    openHDwallet () {
-      if (this.activeTabs === 'ledger') {
-        this.inputLEDGERBtn()
-      } else if (this.activeTabs === 'trezor') {
-        this.inputTREZORBtn()
+    changeHDPath (val) {
+      if (this.HDPath === 'Custom') {
+        this.openHDwallet(this.HDPathCustom)
+      } else {
+        this.openHDwallet(this.HDPath)
       }
     },
-    inputLEDGERBtn () {
+    openHDwallet (HDPath) {
+      HDPath = HDPath ? HDPath : this.HDPath
+      console.log(HDPath)
+      if (this.activeTabs === 'ledger') {
+        this.inputLEDGERBtn(HDPath)
+      } else if (this.activeTabs === 'trezor') {
+        this.inputTREZORBtn(HDPath)
+      }
+    },
+    inputLEDGERBtn (HDPath) {
       this.loading.init = true
-      ledger(this.HDPath, this.page).then(res => {
-        this.eDialog.path = false
+      ledger(HDPath, this.page).then(res => {
         this.setAddr(res)
       })
     },
-    inputTREZORBtn () {
+    inputTREZORBtn (HDPath) {
       this.loading.init = true
-      trezor(this.HDPath, this.page).then(res => {
-        this.eDialog.path = false
+      trezor(HDPath, this.page).then(res => {
         this.setAddr(res)
       })
     },
@@ -219,15 +226,17 @@ export default {
       this.changeAddr()
     },
     changeAddr () {
+      let HDPath = this.HDPath === 'Custom' ? this.HDPathCustom : this.HDPath
       if (this.activeTabs === 'ledger') {
-        this.inputLEDGERBtn()
+        this.inputLEDGERBtn(HDPath)
       } else if (this.activeTabs === 'trezor') {
-        this.inputTREZORBtn()
+        this.inputTREZORBtn(HDPath)
       }
     },
     setAddr (res) {
       console.log(res)
       if (res.msg === 'Success') {
+        this.eDialog.addr = true
         this.addrList = res.info
         this.eDialog.addr = true
       } else {
