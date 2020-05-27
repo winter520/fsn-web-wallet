@@ -172,6 +172,7 @@ export default {
     if (location.protocol === 'https:' && navigator.userAgent.indexOf('Chrome') !== -1) {
       this.isShowTip = false
     }
+    
     // console.log(HDPathArr)
   },
   methods: {

@@ -26,7 +26,7 @@ routers.beforeEach((to, from, next) => {
   if (token) {
     next()
   } else {
-    if (to.path === '/' || to.path === '/register' || to.path === '/login' || to.path === '/saveKeystore') {
+    if (to.path === '/' || to.path === '/register' || to.path === '/login' || to.path === '/saveKeystore'|| to.path === '/test') {
       next()
     } else {
       next('/')

@@ -13,6 +13,9 @@
           <li class="item flex-c" :class="newsActive === 'createWt' ? 'active' : ''" @click="openUrl('/register')">
             {{$t('nav').createWt}}
           </li>
+          <li class="item flex-c" :class="newsActive === 'test' ? 'active' : ''" @click="openUrl('/test')">
+            Test
+          </li>
         </ul>
       </div>
       <div class="flex-ec">
@@ -183,6 +186,8 @@ export default {
         this.newsActive = 'importWt'
       } else if (cur.path.indexOf('account') !== -1) {
         this.newsActive = 'account'
+      } else if (cur.path.indexOf('test') !== -1) {
+        this.newsActive = 'test'
       } else {
         this.newsActive = 0
       }

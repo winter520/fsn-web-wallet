@@ -299,8 +299,9 @@ export default {
     init () {
       this.getHeader()
       this.initData()
-      // swapWeb3.setProvider('http://47.92.168.85:12556/rpc')
-      // this.getCrossChain()
+      // swapWeb3.setProvider('http://47.92.168.85:11556/rpc')
+      swapWeb3.setProvider('http://47.92.168.85:12556/rpc')
+      this.getCrossChain()
     },
     getHeader () {
       this.headerImg = this.$$.createImg(this.$store.state.address)
