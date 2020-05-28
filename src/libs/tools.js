@@ -1,3 +1,4 @@
+import coininfo from '@/config/coininfo.js'
 /**
  * @description 生成随机图片
  */
@@ -6,6 +7,13 @@ import Identicon from 'identicon.js'
  * @description 二维码
  */
 import QRCode from 'qrcodejs2'
+
+/**
+ * @description web3方法及配置
+ */
+import web3 from '@/assets/js/web3/index.js'
+
+import {BigNumber} from 'bignumber.js'
 
 export default {
   fromTime (timestamp) {
@@ -22,6 +30,62 @@ export default {
       timestamp = timestamp.toString().substring(0, 10)
     }
     return Number(timestamp)
+  },
+  
+  getCoinInfo (coin, param) {
+    coin = coin.toUpperCase()
+    if (param) {
+      if (typeof coininfo[coin] !== 'undefined' && typeof coininfo[coin][param] !== 'undefined') {
+        return coininfo[coin]
+      }
+    } else if (!param) {
+      if (typeof coininfo[coin] !== 'undefined') {
+        return coininfo[coin]
+      }
+    }
+    return ''
+  },
+  fromWei (balance, coin) {
+    if (!balance) return 0
+    balance = balance.toString()
+    coin = coin.toUpperCase()
+    let coinInfo = this.getCoinInfo(coin, 'rate')
+    // console.log(coin)
+    // console.log(coinInfo)
+    if (coinInfo && typeof coinInfo.rate !== 'undefined') {
+      let d = Number(coinInfo.rate)
+      balance = Number(balance) / Math.pow(10, d)
+      balance = new BigNumber(balance)
+      balance = balance.toFormat().replace(/,/g, '')
+    } else {
+      if (coin === 'GWEI') {
+        balance = web3.utils.fromWei(balance, 'gwei')
+      } else {
+        balance = web3.utils.fromWei(balance, 'ether')
+      }
+    }
+    return balance
+  },
+  toWei (balance, coin) {
+    if (!balance) return 0
+    balance = balance.toString()
+    coin = coin.toUpperCase()
+    let coinInfo = this.getCoinInfo(coin, 'rate')
+    if (coinInfo && coinInfo.rate) {
+      let d = Number(coinInfo.rate)
+      balance = Number(balance).toFixed(d)
+      balance = Number(balance) * Math.pow(10, d)
+      balance = new BigNumber(balance)
+      balance = balance.toFormat().replace(/,/g, '')
+    } else {
+      if (coin === 'GWEI') {
+        balance = web3.utils.toWei(balance, 'gwei')
+      } else {
+        balance = web3.utils.toWei(balance, 'ether')
+      }
+    }
+    balance = Number(balance).toFixed(0)
+    return balance
   },
   thousandBit (num, dec = 2) {
     let _num = num = Number(num)

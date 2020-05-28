@@ -7,6 +7,12 @@
           <h6 class="h6">FUSION BALANCE</h6>
           <p class="p"><span class="font18 mr-10">≈ {{$$.thousandBit(fsnBalance, 8)}}</span>FSN</p>
         </li>
+        <li class="item" v-if="mBTCBalance">
+          <h6 class="h6">BTC BALANCE</h6>
+          <p class="p"><span class="font18 mr-10">≈ {{$$.thousandBit(
+            $$.fromWei(mBTCBalance, 'BTC')
+          , 8)}}</span>BTC</p>
+        </li>
         <li class="item">
           <h6 class="h6">PUBLIC ADDRESS</h6>
           <p class="p cursorP" @click="copyTxt($store.state.address)">{{$store.state.address}}</p>
@@ -99,7 +105,37 @@
               </el-table>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="Cross Chain" name="ceosschain">Cross Chain</el-tab-pane>
+          <el-tab-pane label="Cross Chain" name="ceosschain">
+            <el-table :data="swapTable" style="width: 100%" :max-height="800" empty-text="Null">
+              <el-table-column :label="$t('label').coin" align="left">
+                <template slot-scope="scope">
+                  <div class="flex-sc">
+                    <div class="coin-logo">
+                      <!-- {{$$.getCoinInfo(scope.row.coinType).logo}} -->
+                      <img :src="getCoinInfo(scope.row.coinType).logo">
+                    </div>
+                    <span :title="scope.row.id">{{scope.row.coinType}}</span>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="ID" align="center">
+                <template slot-scope="scope">
+                  {{$$.cutOut(scope.row.id, 8, 6)}}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('label').balance" align="center">
+                <template slot-scope="scope">
+                  {{$$.thousandBit($$.fromWei(scope.row.balance.toString(), scope.row.coinType), 'no')}}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('label').action" align="center">
+                <template slot-scope="scope">
+                  <el-button type="success" size="mini" @click="toUrl('/swapSend', {id: scope.row.id, balance: scope.row.balance, type: '2', sendType: '0', coinType: scope.row.coinType})">{{$t('btn').withdrawal}}</el-button>
+                  <el-button type="primary" size="mini" @click="toUrl('/swapSend', {id: scope.row.id, balance: scope.row.balance, type: '2', sendType: '1', coinType: scope.row.coinType})">{{$t('btn').send}}</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
           <!-- <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane> -->
         </el-tabs>
         <!-- <div class="account-table">
@@ -238,7 +274,8 @@
 
 <script>
 import coinInfo from '@/config/coininfo.js'
-import swapWeb3 from '@/assets/js/web3/swap.js'
+// import swapABI from '@/config/swapABI.js'
+import {swapTokenContract} from './js/swapContract'
 export default {
   name: 'account',
   data () {
@@ -246,6 +283,7 @@ export default {
       activeName: 'assets',
       headerImg: '',
       fsnBalance: '',
+      mBTCBalance: '',
       balanceData: [],
       timelockData: [],
       addrNode: '',
@@ -257,7 +295,10 @@ export default {
         pwd: false,
         qrCode: false
       },
-      fsnId: '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+      fsnId: '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+      // TokenContract: '',
+      swapInfo: {},
+      swapTable: []
     }
   },
   computed: {
@@ -271,18 +312,9 @@ export default {
   mounted () {
     this.activeName = this.$route.query.activeTab ? this.$route.query.activeTab : 'assets'
     this.init()
-    // console.log(axios.request({url: 'http://47.92.168.85:12556/rpc'}))
-    this.$$.web3.eth.call({
-      // to: this.fsnId
-      to: '0x36793680e55bff3795c0dbad6eb0510a2d06ff42',
-      data: '0x70a08231000000000000000000000000' + 'E000E632124aa65B80f74E3e4cc06DC761610583'
-    }, "latest").then(res => {
-      console.log(res)
-      let num = this.$$.web3.utils.hexToNumber(res)
-      console.log(num)
-    })
   },
   methods: {
+    ...swapTokenContract,
     cancel () {
       this.prop.pwd = false
       this.prop.qrCode = false
@@ -299,8 +331,6 @@ export default {
     init () {
       this.getHeader()
       this.initData()
-      // swapWeb3.setProvider('http://47.92.168.85:11556/rpc')
-      swapWeb3.setProvider('http://47.92.168.85:12556/rpc')
       this.getCrossChain()
     },
     getHeader () {
@@ -359,11 +389,25 @@ export default {
       batch.execute()
     },
     getCrossChain () {
-      swapWeb3.swap.GetServerInfo().then(res => {
-        console.log(res)
-        // this.swapInfo = res.SrcToken
-      }).catch(err => {
-        console.log(err)
+      let url = 'http://47.92.168.85:12556/rpc'
+      this.getSwapContract(url).then(res => {
+        this.swapInfo = res.swapInfo
+        const currentAccount = this.$store.state.address
+        res.contract.methods.balanceOf(currentAccount).call({from: currentAccount}, (err, res) => {
+          this.swapTable = []
+          if (err) {
+            console.log('balanceOf:', err)
+          } else {
+            this.mBTCBalance = res
+            this.swapTable = [
+              {
+                coinType: 'BTC',
+                balance: res,
+                id: this.swapInfo.ContractAddress
+              }
+            ]
+          }
+        })
       })
     },
     openQRcode () {

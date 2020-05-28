@@ -42,45 +42,57 @@ export default {
       params:[]
     }).then(res => {
       console.log(res)
+      let data = res.data
+      const contractId = data.result.DestToken.ContractAddress
+      const abi = swapABI
+      // const currentAccount = '0x46cbe22b687d4b72c8913e4784dfe5b20fdc2b0e'
+      const currentAccount = '0xE000E632124aa65B80f74E3e4cc06DC761610583'
+      let TokenContract = new swapWeb3.eth.Contract(abi, contractId)
+      console.log(TokenContract)
+      // swapWeb3.eth.getBalance(currentAccount).then(res => {
+      //   console.log(res)
+      // })
+      TokenContract.methods.balanceOf(currentAccount).call({from: currentAccount}, (err, res) => {
+        if (err) {
+          console.log('balanceOf:', err)
+        } else {
+          console.log('balanceOf：', res)
+        }
+      })
+      // TokenContract.methods.name().call({from: currentAccount}, (err, res) => {
+      //   if (err) {
+      //     console.log('name：', err)
+      //   } else {
+      //     console.log('name：', res)
+      //   }
+      // })
+      // TokenContract.methods.symbol().call({from: currentAccount}, (err, res) => {
+      //   if (err) {
+      //     console.log('symbol：', err)
+      //   } else {
+      //     console.log('symbol:', res)
+      //   }
+      // })
+      // TokenContract.methods.totalSupply().call({from: currentAccount}, (err, res) => {
+      //   if (err) {
+      //     console.log('totalSupply:', err)
+      //   } else {
+      //     console.log('totalSupply:', res)
+      //   }
+      // })
+      // TokenContract.methods.owner().call({from: currentAccount}, (err, res) => {
+      //   if (err) {
+      //     console.log('owner:', err)
+      //   } else {
+      //     console.log('owner:', res)
+      //   }
+      // })
+      // TokenContract.methods.transfer(currentAccount, '1000').call().then(res => {
+      //   console.log('transfer:', res)
+      // })
+      console.log(TokenContract.methods.transfer(currentAccount, '1000').encodeABI())
+      console.log(TokenContract.methods.Swapout('1000', 'n3NCJ3FgnHiQA4bZXetsgwp1B6V4dEc5g5').encodeABI())
     })
-    const abi = swapABI
-    // const currentAccount = '0x46cbe22b687d4b72c8913e4784dfe5b20fdc2b0e'
-    const currentAccount = '0xE000E632124aa65B80f74E3e4cc06DC761610583'
-    const contractId = '0x309f6c1ebff14a7231e7d9ff78a5199b6810d946'
-    // let contractId = '0xE000E632124aa65B80f74E3e4cc06DC761610583';
-    let TokenContract = new swapWeb3.eth.Contract(abi, contractId, {
-      from: currentAccount, // default from address
-      gasPrice: '10000000000' // default gas price in wei, 10 gwei in this case
-    })
-    console.log(TokenContract)
-    swapWeb3.eth.getBalance(currentAccount).then(res => {
-      console.log(res)
-    })
-    TokenContract.methods.balanceOf(contractId).call({from: currentAccount}, (err, res) => {
-      console.log(err)
-      console.log(res)
-    })
-    // TokenContract.methods.name().call({from: currentAccount}, (err, res) => {
-    //   console.log(err)
-    //   console.log(res)
-    // })
-    // TokenContract.methods.symbol().call({from: currentAccount}, (err, res) => {
-    //   console.log(err)
-    //   console.log(res)
-    // })
-    // TokenContract.methods.totalSupply().call({from: currentAccount}, (err, res) => {
-    //   console.log(err)
-    //   console.log(res)
-    // })
-    // console.log(TokenContract.methods.transfer('0xE000E632124aa65B80f74E3e4cc06DC761610583', '1000').encodeABI())
-    // TokenContract.methods.transfer('0xE000E632124aa65B80f74E3e4cc06DC761610583', '1000').call().then(res => {
-    //   console.log(res)
-    // })
-    // let mytt = TokenContract.at(contractId);
-
-    // // 查询余额
-    // let ret = mytt.balanceOf("0xE000E632124aa65B80f74E3e4cc06DC761610583");
-    // console.log(ret)
   },
   methods: {
     test () {

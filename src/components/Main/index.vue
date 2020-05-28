@@ -13,9 +13,9 @@
           <li class="item flex-c" :class="newsActive === 'createWt' ? 'active' : ''" @click="openUrl('/register')">
             {{$t('nav').createWt}}
           </li>
-          <li class="item flex-c" :class="newsActive === 'test' ? 'active' : ''" @click="openUrl('/test')">
+          <!-- <li class="item flex-c" :class="newsActive === 'test' ? 'active' : ''" @click="openUrl('/test')">
             Test
-          </li>
+          </li> -->
         </ul>
       </div>
       <div class="flex-ec">

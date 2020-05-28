@@ -111,30 +111,7 @@
 </template>
 
 <style lang="scss">
-.form-box {
-  max-width: size(600);padding:0 15px;margin:auto;
-  .item {
-    width: 100%;margin-bottom:20px;
-    .label {
-      width: 100%;text-align: left;display: block;margin-bottom: 10px;font-size: 14px;font-weight: bold;
-    }
-    .input-box {
-      width: 100%;height: 40px;position: relative;font-size:12px;
-    }
-  }
-}
-.down-arrow {
-  width: 40px;height: 40px;position: absolute;top:0;right:0;border-left: 1px solid #ddd;
-}
-.confirm-box {
-  padding: 15px 15px;
-  .ul {
-    .item {
-      text-align: left;font-size: 14px;border-bottom: 1px solid #ddd;margin-bottom: 10px;
-    }
-  }
-}
-
+@import './scss/send.scss';
 </style>
 
 <script>
@@ -159,8 +136,6 @@ export default {
         pwd: false,
         confirm: false,
       },
-      privateKey: '',
-      password: '',
       loading: {
         init: true
       },
@@ -183,9 +158,6 @@ export default {
   computed: {
     address () {
       return this.$store.state.address
-    },
-    keystore () {
-      return this.$store.state.keystore
     },
     chainId () {
       return this.$store.state.chainID
@@ -257,8 +229,6 @@ export default {
       // this.formData = {}
       this.prop.confirm = false
       this.prop.pwd = false
-      this.password = ''
-      this.privateKey = ''
     },
     selectAddr (addr) {
       this.formData.to = addr

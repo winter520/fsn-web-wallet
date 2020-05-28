@@ -13,7 +13,8 @@ export default {
 		w_7: 'Login timeout, please login again!',
 		w_8: 'Your password must be at least 9 characters. Please make sure it is a strong password.',
 		w_9: "* Do NOT forget to save this!",
-		w_10: "Do you request?"
+		w_10: "Do you request?",
+		w_11: 'Insufficient Balance'
 	},
 	success: {
 		s_1: 'Connection succeeded',
@@ -29,6 +30,7 @@ export default {
 		unlock: 'Unlock',
 		copy: 'Copy',
 		send: 'Send',
+		withdrawal: 'Withdrawal',
 		newAdd: 'New address',
 		createWt: 'Create Wallet',
 		importWt: 'Import Wallet',

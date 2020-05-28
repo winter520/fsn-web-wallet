@@ -14,7 +14,8 @@ export default {
 		w_7: '登陆超时请重新登陆！',
 		w_8: '您的密码必须至少9个字符。请确保它是一个强密码。',
 		w_9: "* 不要忘记保存这个！",
-		w_10: "你要申请DCRM地址吗"
+		w_10: "你要申请DCRM地址吗",
+		w_11: '余额不足'
 	},
 	success: {
 		s_1: '连接成功！',
@@ -30,6 +31,7 @@ export default {
 		unlock: '解锁',
 		copy: '复制',
 		send: '发送',
+		withdrawal: '提现',
 		newAdd: '新增地址',
 		createWt: '创建钱包',
 		importWt: '导入钱包',
