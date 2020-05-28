@@ -38,6 +38,7 @@ export default {
 		edit: '编辑',
 		del: '删除',
 		ledger: '连接到Ledger Wallet',
+		ledger1: 'Confirm on Ledger',
 		trezor: '连接到TREZOR',
 		SELECT_WALLET_FILE: "选择钱包文件...",
 		GenerateSAN: '生成短账号',

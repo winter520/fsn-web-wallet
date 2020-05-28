@@ -37,6 +37,7 @@ export default {
 		edit: 'Edit',
 		del: 'Delete',
 		ledger: 'Connect to Ledger',
+		ledger1: 'Confirm on Ledger',
 		trezor: 'Connect to TREZOR',
 		SELECT_WALLET_FILE: "Select Wallet File...",
 		GenerateSAN: 'Generate SAN',

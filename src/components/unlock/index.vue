@@ -4,7 +4,7 @@
       <li class="item" v-if="walletType === 'ledger'">
         <label class="label">Ledger Wallet:</label>
         <div class="input-box">
-          <el-button @click="unlock" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').ledger}}</el-button>
+          <el-button @click="unlock" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').ledger1}}</el-button>
         </div>
       </li>
       <li class="item" v-if="walletType === 'trezor'">
