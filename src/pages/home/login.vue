@@ -68,7 +68,7 @@
           <el-option value='Custom'>Custom</el-option>
         </el-select>
         <el-input v-model="HDPathCustom" v-if="HDPath === 'Custom'" :placeholder="HDPathCustom ? HDPathCustom : HDPath" class="WW30"></el-input>
-        <el-button v-if="HDPath === 'Custom'">123</el-button>
+        <el-button type="primary" v-if="HDPath === 'Custom'" icon="el-icon-check"></el-button>
       </div>
       <div class="selectAddr_type">
         <el-radio-group v-model="selectAddr">
@@ -191,6 +191,7 @@ export default {
     },
     changeHDPath (val) {
       if (this.HDPath === 'Custom') {
+        this.HDPathCustom = this.HDPathCustom ? this.HDPathCustom : "m/44'/60'/0'/0"
         this.openHDwallet(this.HDPathCustom)
       } else {
         this.openHDwallet(this.HDPath)

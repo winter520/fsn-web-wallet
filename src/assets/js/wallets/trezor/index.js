@@ -43,6 +43,7 @@ function getAddressArr (HDPath, page) {
           data.info = addressArr
         } else {
           getAddrRes = ''
+          oldHDPath = ''
           data.error = res.payload.error
         }
         resolve(data)
