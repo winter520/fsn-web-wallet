@@ -10,7 +10,7 @@
       <li class="item" v-if="walletType === 'trezor'">
         <label class="label">TREZOR:</label>
         <div class="input-box">
-          <el-button @click="unlock" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').trezor}}</el-button>
+          <el-button @click="unlock" class="WW100 btn-yellow" :loading="loading.btn" :loading-text="btnTxt" loading-type="spinner">{{$t('btn').trezor1}}</el-button>
         </div>
       </li>
       <li class="item mb-20" v-if="walletType === 'keystore'">

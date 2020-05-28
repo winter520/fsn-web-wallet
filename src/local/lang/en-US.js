@@ -39,6 +39,7 @@ export default {
 		ledger: 'Connect to Ledger',
 		ledger1: 'Confirm on Ledger',
 		trezor: 'Connect to TREZOR',
+		trezor1: 'Confirm on TREZOR',
 		SELECT_WALLET_FILE: "Select Wallet File...",
 		GenerateSAN: 'Generate SAN',
 		NEXT_STEP: "Next step",
