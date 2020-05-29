@@ -64,7 +64,10 @@
       <div class="flex-sc mb-20">
         <span class="mr-10">Address</span>
         <el-select v-model="HDPath" :class="HDPath === 'Custom' ? 'WW30' : 'WW80'" @change="changeHDPath">
-          <el-option v-for="(item, index) in HDPathArr" :key="index" :value="item.path" :label="item.name"></el-option>
+          <el-option v-for="(item, index) in HDPathArr" :key="index" :value="item.path" :label="item.name === 'ETH' ? (activeTabs === 'ledger' ? 'Ledger(ETH)' : 'TREZOR(ETH)') : item.name">
+            <!-- <span v-if="activeTabs === 'ledger'">{{item.path === "m/44'/60'/0'/0" ? 'Ledger(ETH)' : item.name}}</span>
+            <span v-else>{{item.path === "m/44'/60'/0'/0" ? 'TREZOR(ETH)' : item.name}}</span> -->
+          </el-option>
           <el-option value='Custom'>Custom</el-option>
         </el-select>
         <el-input v-model="HDPathCustom" v-if="HDPath === 'Custom'" :placeholder="HDPathCustom ? HDPathCustom : HDPath" class="WW30"></el-input>

@@ -398,6 +398,7 @@ export default {
         res.chainId = this.chainId
         res.from = this.address
         res.to = this.formData.to
+        res.value = rawTx.value
         console.log(res)
         this.dataPage = res
         // this.dataPage.gasLimit = res.gas

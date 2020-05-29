@@ -1,5 +1,6 @@
 export default [
-  {"name":"Ethereum (m/44'/60'/0'/0)","path":"m/44'/60'/0'/0"},
+  // {"name":"Ethereum (m/44'/60'/0'/0)","path":"m/44'/60'/0'/0"},
+  {"name":"ETH","path":"m/44'/60'/0'/0"},
   {"name":"Ethereum Classic (m/44'/61'/0'/0)","path":"m/44'/61'/0'/0"},
   {"name":"Ropsten Testnet (m/44'/1'/0'/0)","path":"m/44'/1'/0'/0"},
   {"name":"SingularDTV (m/0'/0'/0')","path":"m/0'/0'/0'"},

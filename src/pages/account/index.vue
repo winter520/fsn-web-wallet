@@ -8,10 +8,10 @@
           <p class="p"><span class="font18 mr-10">≈ {{$$.thousandBit(fsnBalance, 8)}}</span>FSN</p>
         </li>
         <li class="item" v-if="mBTCBalance">
-          <h6 class="h6">BTC BALANCE</h6>
+          <h6 class="h6">mBTC BALANCE</h6>
           <p class="p"><span class="font18 mr-10">≈ {{$$.thousandBit(
             $$.fromWei(mBTCBalance, 'BTC')
-          , 8)}}</span>BTC</p>
+          , 8)}}</span>mBTC</p>
         </li>
         <li class="item">
           <h6 class="h6">PUBLIC ADDRESS</h6>
@@ -114,7 +114,7 @@
                       <!-- {{$$.getCoinInfo(scope.row.coinType).logo}} -->
                       <img :src="getCoinInfo(scope.row.coinType).logo">
                     </div>
-                    <span :title="scope.row.id">{{scope.row.coinType}}</span>
+                    <span>{{scope.row.coinType === 'BTC' ? 'mBTC' : scope.row.coinType}}</span>
                   </div>
                 </template>
               </el-table-column>
