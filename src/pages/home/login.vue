@@ -1,7 +1,7 @@
 <template>
   <div class="boxConntent1 container flex-c"  v-loading.fullscreen.lock="loading.init" element-loading-text="Loading...">
     <div class="tab-box">
-      <el-tabs tab-position="left" v-model="activeTabs" @tab-click="modalClick">
+      <el-tabs tab-position="left" v-model="activeTabs" @tab-click="handTabClick">
         <el-tab-pane label="Ledger Wallet" name="ledger">
           <hgroup class="selectType_contTitle">
             <h3 class="title">Ledger Hardware Wallet</h3>
@@ -63,14 +63,14 @@
     <el-dialog :title="$t('tip').selectAddr" :visible.sync="eDialog.addr" width="300" :before-close="modalClick" :close-on-click-modal="false" :modal-append-to-body='false'>
       <div class="flex-sc mb-20">
         <span class="mr-10">Address</span>
-        <el-select v-model="HDPath" :class="HDPath === 'Custom' ? 'WW30' : 'WW80'" @change="changeHDPath">
-          <el-option v-for="(item, index) in HDPathArr" :key="index" :value="item.path" :label="item.name === 'ETH' ? (activeTabs === 'ledger' ? 'Ledger(ETH)' : 'TREZOR(ETH)') : item.name">
+        <el-select v-model="HDPath" class="mr-10" :class="HDPath === 'Custom' ? 'WW30' : 'WW80'" @change="changeHDPath">
+          <el-option v-for="(item, index) in HDPathArr" :key="index" :value="item.path" :label="item.name">
             <!-- <span v-if="activeTabs === 'ledger'">{{item.path === "m/44'/60'/0'/0" ? 'Ledger(ETH)' : item.name}}</span>
             <span v-else>{{item.path === "m/44'/60'/0'/0" ? 'TREZOR(ETH)' : item.name}}</span> -->
           </el-option>
           <el-option value='Custom'>Custom</el-option>
         </el-select>
-        <el-input v-model="HDPathCustom" v-if="HDPath === 'Custom'" :placeholder="HDPathCustom ? HDPathCustom : HDPath" class="WW30"></el-input>
+        <el-input v-model="HDPathCustom" v-if="HDPath === 'Custom'" :placeholder="HDPathCustom ? HDPathCustom : HDPath" class="WW30 mr-10"></el-input>
         <el-button type="primary" v-if="HDPath === 'Custom'" icon="el-icon-check"></el-button>
       </div>
       <div class="selectAddr_type">
@@ -131,7 +131,7 @@
 import wallet from '@/assets/js/wallets/ethereum/wallet'
 import {getAddressArr as ledger} from '@/assets/js/wallets/ledger/index.js'
 import {getAddressArr as trezor} from '@/assets/js/wallets/trezor/index.js'
-import HDPathArr from '@/config/HDPath.js'
+// import HDPathArr from '@/config/HDPath.js'
 export default {
   name: 'login',
   data () {
@@ -152,7 +152,7 @@ export default {
       page: 0,
       isShowTip: true,
       showPwdBtn: false,
-      HDPathArr: HDPathArr,
+      HDPathArr: [],
       HDPath: "m/44'/60'/0'/0",
       HDPathCustom: ''
     }
@@ -175,7 +175,7 @@ export default {
     if (location.protocol === 'https:' && navigator.userAgent.indexOf('Chrome') !== -1) {
       this.isShowTip = false
     }
-    
+    this.handTabClick()
     // console.log(HDPathArr)
   },
   methods: {
@@ -192,9 +192,22 @@ export default {
       document.getElementById("fileName").innerHTML = this.$t('btn').SELECT_WALLET_FILE
       document.getElementById("fileUpload").value = ''
     },
+    handTabClick () {
+      this.HDPathArr = [
+        {name: "Ledger(ETH)(m/44'/60'/0)", path: "m/44'/60'/0"},
+        {name: "TREZOR(ETH)(m/44'/60'/0'/0)", path: "m/44'/60'/0'/0"}
+      ]
+      if (this.activeTabs === 'ledger') {
+        this.HDPath = "m/44'/60'/0"
+      } else if (this.activeTabs === 'trezor') {
+        this.HDPath = "m/44'/60'/0'/0"
+      }
+      this.HDPathCustom = this.HDPath
+      this.modalClick()
+    },
     changeHDPath (val) {
       if (this.HDPath === 'Custom') {
-        this.HDPathCustom = this.HDPathCustom ? this.HDPathCustom : "m/44'/60'/0'/0"
+        this.HDPathCustom = this.HDPathCustom ? this.HDPathCustom : this.HDPathArr[0].path
         this.openHDwallet(this.HDPathCustom)
       } else {
         this.openHDwallet(this.HDPath)
