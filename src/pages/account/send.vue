@@ -5,13 +5,17 @@
         <li class="item">
           <label class="label">{{$t('label').address}}:</label>
           <div class="input-box relative">
-            <el-input type="text" v-model="formData.to" class="" :disabled="isToAsset && sendType === '1' && activeName === 'a'"></el-input>
+            <!-- <el-input type="text" v-model="formData.to" class="" :disabled="isToAsset && sendType === '1' && activeName === 'a'"></el-input> -->
+            <input type="text" v-model="formData.to" class="input-text H40 WW100 plr10" :disabled="isToAsset && sendType === '1' && activeName === 'a'">
+            <!-- <el-input type="text" v-model="formData.to" class="" v-if="isToAsset && sendType === '1' && activeName === 'a'" :disabled="true"></el-input>
+            <el-input type="text" v-model="formData.to" class="" v-else></el-input> -->
           </div>
         </li>
         <li class="item">
           <label class="label">{{$t('label').value}}:</label>
           <div class="input-box">
-            <el-input type="number" v-model="formData.value" class=""></el-input>
+            <!-- <el-input type="number" v-model="formData.value" class=""></el-input> -->
+            <input type="number" v-model="formData.value" class="input-text H40 WW100 plr10">
           </div>
           <span class="flex-sc font12 color_99">{{$t('label').balance}}：{{balance}}</span>
         </li>
@@ -230,10 +234,6 @@ export default {
       this.prop.confirm = false
       this.prop.pwd = false
     },
-    selectAddr (addr) {
-      this.formData.to = addr
-      this.prop.address = false
-    },
     confirmMonth (val) {
       this.formData.month = val
       this.prop.month = false
@@ -378,7 +378,7 @@ export default {
       // console.log(this.formData.value)
       let rawTx = {
         from: this.address,
-        to: this.formData.to.replace(/\s/, ''),
+        to: this.formData.to,
         value: this.$$.web3.utils.toHex(this.$$.web3.utils.toWei(this.formData.value.toString(), 'ether')),
         asset: this.assetId,
       }

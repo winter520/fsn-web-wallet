@@ -8,13 +8,15 @@
             <span class="font12 color_99 ml-10" style="font-weight:normal;">（{{Number(this.urlParams.sendType) ? 'FSN Address' : 'BTC Address'}}）</span>
           </label>
           <div class="input-box relative">
-            <el-input type="text" v-model="formData.to" class=""></el-input>
+            <!-- <el-input type="text" v-model="formData.to" class=""></el-input> -->
+            <input type="text" v-model="formData.to" class="input-text H40 WW100 plr10">
           </div>
         </li>
         <li class="item">
           <label class="label">{{$t('label').value}}:</label>
           <div class="input-box">
-            <el-input type="number" v-model="formData.value" class=""></el-input>
+            <!-- <el-input type="number" v-model="formData.value" class=""></el-input> -->
+            <input type="number" v-model="formData.value" class="input-text H40 WW100 plr10">
           </div>
           <span class="flex-sc font12 color_99">{{$t('label').balance}}：{{balance}} {{urlParams.coinType}}</span>
         </li>
